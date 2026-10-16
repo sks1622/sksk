@@ -110,6 +110,9 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .stat b { font-family: var(--f-mono); font-size: 18px; font-weight: 500; font-variant-numeric: tabular-nums; }
 .stat span { font-size: 12px; color: var(--muted); }
 
+.sizes.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.door-ctl { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; }
+.door-open { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }
 .legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
 .legend li { display: grid; grid-template-columns: 12px 1fr auto; gap: 8px; align-items: center; }
 .legend i { width: 12px; height: 12px; border-radius: 3px; display: block; border: 1px solid var(--line); }
@@ -195,7 +198,19 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
           <li><i style="background:#d8cfb4"></i>분전반 (차단기함)<small>에어컨 벽</small></li>
           <li><i style="background:#e9e3cf"></i>인터폰 · 보일러 조절기 · 스위치<small>옷장 벽</small></li>
         </ul>
-        <p class="fine">벽 이름은 사진 기준이에요. 창문 벽과 문 벽이 400cm, 에어컨 벽과 옷장 벽이 430cm라고 가정했어요.</p>
+        <div class="door-ctl">
+          <div class="sizes two">
+            <label for="door-x">에어컨 벽 ~ 문틀 cm<input id="door-x" type="number" min="0" max="390" step="1"></label>
+            <label for="door-w">문틀 폭 cm<input id="door-w" type="number" min="60" max="300" step="1"></label>
+          </div>
+          <div class="door-open"><span class="fine">드나드는 쪽</span>
+            <div class="seg" role="group" aria-label="미닫이문 드나드는 쪽">
+              <button id="open-W" aria-pressed="false">에어컨 벽 쪽</button>
+              <button id="open-E" aria-pressed="true">옷장 벽 쪽</button>
+            </div>
+          </div>
+        </div>
+        <p class="fine">문 위치는 사진으로 어림한 값이에요. 줄자로 잰 값을 넣으면 3D와 점검이 바로 바뀌어요. 벽 이름은 사진 기준이에요. 창문 벽과 문 벽이 400cm, 에어컨 벽과 옷장 벽이 430cm라고 가정했어요.</p>
       </section>
       <section>
         <h3>내 배치 보내기</h3>
@@ -231,7 +246,6 @@ const ROOM = { W: 400, D: 430, H: 200 };
 const S = 0.01;
 const WALL = { N: '창문 벽', S: '문 벽', W: '에어컨 벽', E: '옷장 벽' };
 const ZONE = {
-  door:     { x0: 175, x1: 260, z0: 345, z1: 430 },
   window:   { x0: 160, x1: 320, z0: 0,   z1: 40 },
   intercom: { x0: 360, x1: 400, z0: 305, z1: 375 },
   breaker:  { x0: 0,   x1: 40,  z0: 325, z1: 365 },
@@ -264,7 +278,7 @@ const PRESETS = {
       ['con', '창 쪽엔 콘센트가 없어서 에어컨 벽 콘센트에서 멀티탭을 2m 정도 끌어와야 해요'] ],
     items: [ P('wardrobe',370,50,270), P('desk',230,30,0), P('chair',230,90,180), P('bookshelf',130,15,0),
       P('drawer',70,20,0), P('bed',55,320,180), P('grayshelf',15,195,90), P('mirror',20,130,90),
-      P('rack',377.5,150,270), P('carrier',387.5,225,270), P('table',230,260,0), P('lamp',130,400,0) ] },
+      P('rack',377.5,150,270), P('carrier',387.5,225,270), P('table',230,260,0), P('lamp',125,215,0) ] },
   B: { tag: 'B', name: '코너 책상형', notes: [
       '책상은 지금처럼 인터폰 아래 구석에 두고, 매트리스를 창문 아래로 옮긴 안이에요',
       '책상·책장·행거·옷장이 한 벽에 모여서 수납 동선이 짧아요',
@@ -295,9 +309,17 @@ const ORDER = ['A', 'B', 'C', 'cur'];
 
 // ---------- state
 const KEY = 'room-planner-v1';
+// 미닫이문: 문틀 시작(에어컨 벽에서), 문틀 폭, 드나드는 쪽(W/E 절반)
+const DOOR0 = { x: 50, w: 170, open: 'E' };
+const DOOR = { ...DOOR0 };
+function doorZone() {
+  const half = DOOR.w / 2, x0 = DOOR.open === 'E' ? DOOR.x + half : DOOR.x;
+  return { x0: x0 + 3, x1: x0 + half - 3, z0: ROOM.D - 85, z1: ROOM.D };
+}
 let saved = {};
 try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { saved = {}; }
 const CAT = JSON.parse(JSON.stringify(CAT0));
+if (saved.door) Object.assign(DOOR, saved.door);
 if (saved.sizes) for (const [id, s] of Object.entries(saved.sizes)) if (CAT[id]) Object.assign(CAT[id], s);
 const layouts = {};
 for (const k of ORDER) layouts[k] = (saved.layouts && saved.layouts[k]) ? saved.layouts[k] : PRESETS[k].items.map(i => ({ ...i }));
@@ -308,7 +330,7 @@ let showLabels = true, showZones = true, view = '3d';
 function persist() {
   const sizes = {};
   for (const id in CAT) { const a = CAT[id], b = CAT0[id]; if (a.w !== b.w || a.d !== b.d || a.h !== b.h) sizes[id] = { w: a.w, d: a.d, h: a.h }; }
-  try { localStorage.setItem(KEY, JSON.stringify({ layouts, sizes, current })); } catch (e) {}
+  try { localStorage.setItem(KEY, JSON.stringify({ layouts, sizes, current, door: DOOR })); } catch (e) {}
 }
 
 // ---------- geometry helpers (cm)
@@ -349,7 +371,7 @@ function evaluate() {
     out.push(['crit', `${a.c.name} · ${b.c.name}: 서로 겹쳐요`]); bad.add(a.it.id); bad.add(b.it.id);
   }
   for (const { it, r, c } of R) {
-    if (overlap(r, ZONE.door)) { out.push(['crit', `${c.name}: 미닫이문 앞 통로를 막아요`]); bad.add(it.id); }
+    if (overlap(r, doorZone())) { out.push(['crit', `${c.name}: 미닫이문 앞 통로를 막아요`]); bad.add(it.id); }
     if (c.h > 95 && overlap(r, ZONE.window)) { out.push(['warn', `${c.name}: 창문을 가려요 (높이 ${c.h}cm)`]); bad.add(it.id); }
     if (c.h > 110 && overlap(r, ZONE.intercom)) { out.push(['warn', `${c.name}: 인터폰·보일러 조절기를 가려요`]); bad.add(it.id); }
     if (c.h > 120 && overlap(r, ZONE.breaker)) { out.push(['warn', `${c.name}: 분전반(차단기함)을 가려요`]); bad.add(it.id); }
@@ -496,14 +518,26 @@ bx(gW, 1.2, 9, 7, 0.6, 145, 102, beige);
 bx(gW, 1.2, 9, 7, 0.6, 22, 405, beige);
 bx(gW, 3, 22, 17, 1.5, 140, 345, mat('#d8cfb4'));
 bx(gW, 0.6, 12, 11, 3.2, 146, 345, mat('#2f6b4f', { roughness: 0.3 }));
-// south wall: sliding door frame 90–260
-wallBox(gS, -T, 90, 0, ROOM.H, ROOM.D, ROOM.D + T); wallBox(gS, 260, ROOM.W + T, 0, ROOM.H, ROOM.D, ROOM.D + T);
-wallBox(gS, 90, 260, 190, ROOM.H, ROOM.D, ROOM.D + T);
-for (const [w, h, x, y] of [[6, 190, 93, 0], [6, 190, 257, 0], [170, 6, 175, 184]]) bx(gS, w, h, 10, x, y, ROOM.D + 1, wood);
-const door = new THREE.Group(); gS.add(door);
-for (const [w, h, x, y] of [[6, 184, 99, 0], [6, 184, 172, 0], [79, 6, 135.5, 0], [79, 6, 135.5, 178]]) bx(door, w, h, 4, x, y, ROOM.D - 1, wood);
-for (let i = 0; i < 4; i++) { bx(door, 67, 38, 1.5, 135.5, 10 + i * 42.5, ROOM.D - 1, glass).castShadow = false; if (i) bx(door, 67, 4, 4, 135.5, 6 + i * 42.5, ROOM.D - 1, wood); }
-bx(gS, 79, 184, 1, 214, 0, ROOM.D + 12, mat('#4b4f52', { roughness: 1 })).castShadow = false;
+// south wall: sliding door, rebuilt whenever its position changes
+const southParts = new THREE.Group(); gS.add(southParts);
+function buildSouth() {
+  southParts.traverse(o => o.geometry && o.geometry.dispose()); southParts.clear();
+  const g = southParts, a = DOOR.x, b = DOOR.x + DOOR.w, half = DOOR.w / 2, top = 190;
+  if (a > 0) wallBox(g, -T, a, 0, ROOM.H, ROOM.D, ROOM.D + T); else wallBox(g, -T, 0, 0, ROOM.H, ROOM.D, ROOM.D + T);
+  if (b < ROOM.W) wallBox(g, b, ROOM.W + T, 0, ROOM.H, ROOM.D, ROOM.D + T); else wallBox(g, ROOM.W, ROOM.W + T, 0, ROOM.H, ROOM.D, ROOM.D + T);
+  wallBox(g, a, b, top, ROOM.H, ROOM.D, ROOM.D + T);
+  for (const [w, h, x, y] of [[6, top, a + 3, 0], [6, top, b - 3, 0], [DOOR.w, 6, (a + b) / 2, top - 6]]) bx(g, w, h, 10, x, y, ROOM.D + 1, wood);
+  // glass panel covers the closed half, the open half shows the kitchen
+  const p0 = DOOR.open === 'E' ? a + 6 : a + half, pw = half - 6, pc = p0 + pw / 2, ph = top - 6;
+  for (const [w, h, x, y] of [[6, ph, p0 + 3, 0], [6, ph, p0 + pw - 3, 0], [pw, 6, pc, 0], [pw, 6, pc, ph - 6]]) bx(g, w, h, 4, x, y, ROOM.D - 1, wood);
+  const gh = (ph - 18) / 4;
+  for (let i = 0; i < 4; i++) { bx(g, pw - 12, gh - 4, 1.5, pc, 8 + i * gh, ROOM.D - 1, glass).castShadow = false; if (i) bx(g, pw - 12, 4, 4, pc, 4 + i * gh, ROOM.D - 1, wood); }
+  const o0 = DOOR.open === 'E' ? a + half : a + 6;
+  bx(g, half - 6, ph, 1, o0 + (half - 6) / 2, 0, ROOM.D + 12, mat('#4b4f52', { roughness: 1 })).castShadow = false;
+  for (const [x0, x1] of [[0, a], [b, ROOM.W]]) if (x1 - x0 > 1) { bx(g, x1 - x0, 7, 1.5, (x0 + x1) / 2, 0, ROOM.D - 0.75, wood); bx(g, x1 - x0, 3, 1.5, (x0 + x1) / 2, ROOM.H - 3, ROOM.D - 0.75, wood); }
+  bx(g, DOOR.w, 3, 1.5, (a + b) / 2, ROOM.H - 3, ROOM.D - 0.75, wood);
+}
+buildSouth();
 // east wall: intercom, boiler thermostat, switch
 wallBox(gE, ROOM.W, ROOM.W + T, 0, ROOM.H, -T, ROOM.D + T);
 bx(gE, 3, 26, 10, ROOM.W - 1.5, 118, 315, beige);
@@ -511,7 +545,7 @@ bx(gE, 2, 14, 13, ROOM.W - 1, 128, 340, mat('#f4f4f4'));
 bx(gE, 0.6, 5, 8, ROOM.W - 2.2, 135, 340, mat('#1b2a3a', { emissive: '#3b6db3', emissiveIntensity: 0.4 }));
 bx(gE, 1.5, 13, 8, ROOM.W - 0.75, 124, 362, beige);
 // baseboards + crown molding
-for (const [g, w, d, x, z] of [[gN, ROOM.W, 1.5, 200, 0.75], [gS, 90, 1.5, 45, ROOM.D - 0.75], [gS, 140, 1.5, 330, ROOM.D - 0.75], [gW, 1.5, ROOM.D, 0.75, 215], [gE, 1.5, ROOM.D, ROOM.W - 0.75, 215]]) {
+for (const [g, w, d, x, z] of [[gN, ROOM.W, 1.5, 200, 0.75], [gW, 1.5, ROOM.D, 0.75, 215], [gE, 1.5, ROOM.D, ROOM.W - 0.75, 215]]) {
   bx(g, w, 7, d, x, 0, z, wood); bx(g, w, 3, d, x, ROOM.H - 3, z, wood);
 }
 
@@ -542,7 +576,7 @@ function zonePlane(r, color, op = 0.22) {
 }
 function rebuildZones() {
   zoneGroup.clear();
-  zoneGroup.add(zonePlane(ZONE.door, '#2c5ea8'));
+  zoneGroup.add(zonePlane(doorZone(), '#2c5ea8'));
   for (const it of layouts[current]) { const z = swingZone(it); if (z) zoneGroup.add(zonePlane(z, '#2c5ea8', 0.16)); }
   zoneGroup.visible = showZones;
 }
@@ -753,6 +787,16 @@ for (const k of ['w', 'd', 'h']) $('size-' + k).addEventListener('change', e => 
   for (const key of ORDER) for (const it of layouts[key]) if (it.id === selected) clampItem(it);
   buildItem(layouts[current].find(i => i.id === selected)); commit();
 });
+function syncDoorInputs() {
+  $('door-x').value = DOOR.x; $('door-w').value = DOOR.w;
+  $('open-W').setAttribute('aria-pressed', DOOR.open === 'W'); $('open-E').setAttribute('aria-pressed', DOOR.open === 'E');
+}
+function doorChanged() { buildSouth(); syncDoorInputs(); persist(); rebuildZones(); renderChecks(); }
+$('door-w').addEventListener('change', e => { const v = Math.round(Number(e.target.value)); if (Number.isFinite(v)) DOOR.w = Math.min(Math.max(v, 60), ROOM.W); DOOR.x = Math.min(DOOR.x, ROOM.W - DOOR.w); doorChanged(); });
+$('door-x').addEventListener('change', e => { const v = Math.round(Number(e.target.value)); if (Number.isFinite(v)) DOOR.x = Math.min(Math.max(v, 0), ROOM.W - DOOR.w); doorChanged(); });
+$('open-W').addEventListener('click', () => { DOOR.open = 'W'; doorChanged(); });
+$('open-E').addEventListener('click', () => { DOOR.open = 'E'; doorChanged(); });
+syncDoorInputs();
 $('b-rot').addEventListener('click', rotateSel);
 $('b-desel').addEventListener('click', () => select(null));
 $('v-3d').addEventListener('click', () => setView('3d'));
@@ -769,7 +813,8 @@ $('b-reset-yes').addEventListener('click', () => {
 });
 
 function layoutText() {
-  const lines = [`[내 방 배치 · ${PRESETS[current].name}]`, `방 ${ROOM.W}×${ROOM.D}×${ROOM.H}cm (${WALL.N}·${WALL.S} ${ROOM.W}, ${WALL.W}·${WALL.E} ${ROOM.D})`];
+  const lines = [`[내 방 배치 · ${PRESETS[current].name}]`, `방 ${ROOM.W}×${ROOM.D}×${ROOM.H}cm (${WALL.N}·${WALL.S} ${ROOM.W}, ${WALL.W}·${WALL.E} ${ROOM.D})`,
+    `미닫이문: ${WALL.W}에서 문틀까지 ${DOOR.x}, 문틀 폭 ${DOOR.w}, 드나드는 쪽 ${DOOR.open === 'E' ? WALL.E : WALL.W} 쪽`];
   for (const it of layouts[current]) {
     const c = CAT[it.id], r = rect(it);
     lines.push(`- ${c.name} ${c.w}×${c.d}×${c.h} | ${WALL.W}에서 ${Math.round(r.x0)}, ${WALL.N}에서 ${Math.round(r.z0)} | 앞면 ${dirName(fdir(it))}`);
