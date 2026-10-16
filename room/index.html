@@ -264,7 +264,9 @@ const CAT0 = {
   bookshelf:  { name: '5단 책장',           w: 60, d: 24, h: 179, kind: 'bookshelf' },
   bed:        { name: '퀸 침대',            w: 164, d: 214, h: 101, kind: 'bed' },
   nightstand: { name: '협탁',               w: 43, d: 40, h: 60, kind: 'nightstand' },
-  table:      { name: '반타원 테이블',      w: 100, d: 80, h: 73, kind: 'dtable' },
+  table:      { name: '반타원 테이블',      w: 100, d: 80, h: 73, kind: 'dtable', seat: 60 },
+  dchair1:    { name: '식탁 의자 1',        w: 45, d: 50, h: 80, kind: 'dchair', tuck: true, est: true },
+  dchair2:    { name: '식탁 의자 2',        w: 45, d: 50, h: 80, kind: 'dchair', tuck: true, est: true },
   desk:       { name: 'H형 책상 1200',      w: 120, d: 64, h: 122, top: 72, tower: 24, kind: 'hdesk', seat: 60 },
   chair:      { name: '의자',               w: 55, d: 55, h: 90, kind: 'chair', tuck: true, est: true },
   grayshelf:  { name: '회색 4단 선반',      w: 40, d: 30, h: 120, kind: 'grayshelf', est: true },
@@ -278,16 +280,17 @@ const CAT0 = {
 
 const P = (id, x, z, rot, off = false) => ({ id, x, z, rot, off });
 const WARD_E = [P('wardrobeA',369,40,270), P('wardrobeB',369,120,270), P('slim',370.75,180.25,270)];
-const EST_OFF = ['chair','grayshelf','mirror','drawer','lamp','rack','topper','carrier'].map(id => P(id, 200, 230, 0, true));
+const EST_OFF = ['chair','grayshelf','mirror','drawer','lamp','rack','topper','carrier','dchair1','dchair2'].map(id => P(id, 200, 230, 0, true));
+const offExcept = (...ids) => EST_OFF.filter(p => !ids.includes(p.id));
 const PRESETS = {
-  A: { tag: 'A', name: '침대 머리 에어컨 벽', badge: '추천', notes: [
+  A: { tag: 'A', name: '침대 머리 에어컨 벽', notes: [
       '퀸 침대 머리를 에어컨 벽에 붙이고, H형 책상은 창 아래에 둔 안이에요',
       '책상 선반 탑(높이 122)이 창을 가리지 않게 선반을 왼쪽으로 조립해 창 옆 벽에 붙였어요',
-      '옷장 160, 400 옷장, 5단 책장이 옷장 벽에 한 줄로 서고, 반타원 테이블은 문 바로 안쪽 옷장 벽에 붙어요',
+      '옷장 160과 400 옷장이 옷장 벽에 한 줄로 서고, 5단 책장은 책상 옆 창문 벽에 와요. 반타원 테이블은 문 바로 안쪽 옷장 벽에 붙어요',
       '침대 발치와 테이블 사이에 85cm 통로가 남아 문에서 책상까지 바로 걸어가요',
       '주방 수납장은 문 왼쪽(에어컨 벽 쪽) 벽에 둬서 주방 물건을 꺼내기 편해요',
       ['con', '창 쪽엔 콘센트가 없어서 책상까지 멀티탭을 1.5m 정도 끌어와야 해요'] ],
-    items: [ ...WARD_E, P('bookshelf',388,235,270), P('table',350,305,180), P('cabinet',70,410,180),
+    items: [ ...WARD_E, P('bookshelf',100,12,0), P('table',350,305,180), P('cabinet',70,410,180),
       P('bed',107,242,90), P('nightstand',20,134.5,90), { ...P('desk',196,32,0), flip: true }, ...EST_OFF ] },
   B: { tag: 'B', name: '침대 머리 인터폰 벽', notes: [
       '설치된 옷장은 그대로 두고, 퀸 침대 머리를 옷장 옆 벽(인터폰 아래)에 붙인 안이에요',
@@ -298,14 +301,15 @@ const PRESETS = {
       ['con', '문으로 들어오면 침대 옆을 돌아서 방 안쪽으로 가야 해요'] ],
     items: [ ...WARD_E.slice(0, 2), { ...P('desk',196,32,0), flip: true }, P('nightstand',380,347.5,270), P('bed',293,242,270),
       P('bookshelf',12,260,90), P('cabinet',20,140,90), P('slim',29.25,200.25,90), P('table',50,340,0), ...EST_OFF ] },
-  C: { tag: 'C', name: '침대 문 옆 구석', notes: [
+  C: { tag: 'C', name: '침대 문 옆 구석', badge: '선택', notes: [
       '퀸 침대 머리를 문 왼쪽 벽(에어컨 벽 쪽 155cm)에 붙이고, 책상은 콘센트가 있는 에어컨 벽에 둔 안이에요',
       '책상 바로 옆에 콘센트 3구가 있어서 선 정리가 깔끔해요. 선반 탑은 창문 쪽 끝에 와요',
-      '반타원 테이블을 창 아래 밝은 자리에 두고, 옷장 벽 쪽 바닥이 넓게 비어요',
+      '반타원 테이블을 창 아래 밝은 자리에 두고 식탁 의자 2개를 나란히 놓았어요. 의자를 빼고 앉을 60cm를 비워 뒀어요',
+      '테이블 앞과 옷장 벽 쪽 바닥이 넓게 비어서 문에서 들어오는 길이 막히지 않아요',
       ['con', '침대 폭(164)이 벽(155)보다 9cm 넓어서 문틀 앞으로 조금 나와요. 미닫이 유리문이 열리는 쪽은 아니에요'],
       ['con', '에어컨이 책상 바로 위라 여름엔 바람 방향을 위로 두세요'] ],
     items: [ ...WARD_E, P('bed',82,323,180), P('nightstand',185.5,410,180), P('desk',32,75,90), P('bookshelf',12,170,90),
-      P('cabinet',380,235,270), P('table',220,40,0), ...EST_OFF ] },
+      P('cabinet',380,235,270), P('table',220,40,0), P('dchair1',195,100,180), P('dchair2',245,100,180), ...offExcept('dchair1','dchair2') ] },
   cur: { tag: '지금', name: '사진 속 지금 상태', notes: [
       '사진을 보고 지금 놓인 자리를 옮겨 놓았어요. 방 모델이 실제와 맞는지 먼저 확인해 보세요',
       '책상 옆에 있는 선반 달린 흰 장을 주방 수납장, 좁고 긴 흰 장을 400 옷장으로 보았어요',
@@ -314,12 +318,12 @@ const PRESETS = {
     items: [ P('wardrobeA',369,40,270), P('wardrobeB',369,120,270), P('slim',360,215,0), P('cabinet',370,270,0),
       P('desk',368,355,270), P('grayshelf',35,415,0), P('chair',60,360,0), P('rack',130,407,180),
       P('topper',200,235,0), P('mirror',150,40,0), P('drawer',225,25,0), P('lamp',200,300,0), P('carrier',255,70,0),
-      P('bed',107,242,90,true), P('nightstand',20,134.5,90,true), P('bookshelf',300,418,180,true), P('table',350,310,180,true) ] },
+      P('bed',107,242,90,true), P('nightstand',20,134.5,90,true), P('bookshelf',300,418,180,true), P('table',350,310,180,true), P('dchair1',200,230,0,true), P('dchair2',260,230,0,true) ] },
 };
 const ORDER = ['A', 'B', 'C', 'cur'];
 
 // ---------- state
-const KEY = 'room-planner-v5';
+const KEY = 'room-planner-v6';
 // 미닫이문: 문틀 시작(에어컨 벽에서), 문틀 폭, 드나드는 쪽(W/E 절반)
 const DOOR0 = { x: 155, w: 190, open: 'E' };
 const DOOR = { ...DOOR0 };
@@ -338,7 +342,7 @@ for (const k of ORDER) for (const f of WARD_E.slice(0, 2)) {
   if (it) Object.assign(it, { x: f.x, z: f.z, rot: f.rot, off: false }); else layouts[k].unshift({ ...f });
 }
 const live = () => layouts[current].filter(i => !i.off);
-let current = ORDER.includes(saved.current) ? saved.current : 'A';
+let current = ORDER.includes(saved.current) ? saved.current : 'C';
 let selected = null;
 let showLabels = true, showZones = true, view = '3d';
 
@@ -396,7 +400,8 @@ function evaluate() {
     const a = R[i], b = R[j];
     if (!overlap(a.r, b.r)) continue;
     const pair = [a.it.id, b.it.id];
-    if (pair.includes('chair') && (pair.includes('desk') || pair.includes('table'))) continue;
+    const seatable = k => ['desk', 'hdesk', 'dtable'].includes(k);
+    if ((a.c.tuck && seatable(b.c.kind)) || (b.c.tuck && seatable(a.c.kind))) continue;
     out.push(['crit', `${a.c.name} · ${b.c.name}: 서로 겹쳐요`]); bad.add(a.it.id); bad.add(b.it.id);
   }
   for (const { it, r, c } of R) {
@@ -410,7 +415,7 @@ function evaluate() {
   }
   for (const a of R) {
     const z = swingZone(a.it); if (!z) continue;
-    for (const b of R) if (b !== a && overlap(z, b.r)) { out.push(['warn', a.c.seat ? `${b.c.name}: ${a.c.name} 앞 앉을 자리(${a.c.seat}cm)에 있어요` : `${b.c.name}: ${a.c.name} 문이 열릴 자리(${a.c.swing}cm)에 있어요`]); bad.add(b.it.id); }
+    for (const b of R) if (b !== a && !(a.c.seat && b.c.tuck) && overlap(z, b.r)) { out.push(['warn', a.c.seat ? `${b.c.name}: ${a.c.name} 앞 앉을 자리(${a.c.seat}cm)에 있어요` : `${b.c.name}: ${a.c.name} 문이 열릴 자리(${a.c.swing}cm)에 있어요`]); bad.add(b.it.id); }
   }
   const bed = items.find(i => i.id === 'bed');
   if (bed) {
@@ -653,6 +658,13 @@ const BUILD = {
     bx(g, c.w, 3, c.d, 0, c.h - 3, 0, C.white); bx(g, c.w, 0.6, c.d, 0, c.h - 3.3, 0, C.edge);
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) bx(g, 3, c.h - 3, 3, sx * (c.w / 2 - 3), 0, sz * (c.d / 2 - 3), C.white);
     bx(g, c.w - 6, 2, 2, 0, 12, -c.d / 2 + 3, C.white);
+  },
+  dchair(g, c) {
+    const w = mat('#c9a77c', { roughness: 0.6 }), seat = mat('#efe9df');
+    for (const sx of [-1, 1]) for (const sz of [-1, 1]) bx(g, 2.5, 44, 2.5, sx * (c.w / 2 - 3), 0, sz * (c.d / 2 - 3), w);
+    bx(g, c.w, 4, c.d - 4, 0, 44, 2, seat);
+    for (const sx of [-1, 1]) bx(g, 2.5, c.h - 44, 2.5, sx * (c.w / 2 - 3), 44, -c.d / 2 + 3, w);
+    bx(g, c.w - 4, 14, 2, 0, c.h - 16, -c.d / 2 + 3, w);
   },
   chair(g, c) {
     const fab = mat('#bdb5a8'), mesh = mat('#d4d6d6');
