@@ -208,7 +208,7 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
           <li><i style="background:#cfe3f2"></i>창문 (창틀 높이 약 95)<small>창문 벽</small></li>
           <li><i style="background:#c7894e"></i>주방 미닫이문<small>문 벽</small></li>
           <li><i style="background:#f4f4f0"></i>에어컨 · 창가 콘센트 3구<small>에어컨 벽</small></li>
-          <li><i style="background:#e9e3cf"></i>문 쪽 콘센트 (문 벽에서 약 80cm)<small>에어컨 벽</small></li>
+          <li><i style="background:#e9e3cf"></i>문 쪽 콘센트 (문 벽에서 40cm)<small>에어컨 벽</small></li>
           <li><i style="background:#d8cfb4"></i>분전반 (차단기함)<small>에어컨 벽</small></li>
           <li><i style="background:#e9e3cf"></i>인터폰 · 보일러 조절기 · 스위치<small>옷장 벽</small></li>
         </ul>
@@ -254,8 +254,8 @@ const ZONE = {
   acUnit:   { x0: 0,   x1: 25,  z0: 8,   z1: 93 },
   ac:       { x0: 0,   x1: 150, z0: 0,   z1: 120 },
 };
-// 사진 1·5 기준: 창 쪽 구석 3구, 문 쪽 구석에서 약 80cm(분전반 아래) 콘센트
-const OUTLETS = [ { x: 0, z: 55, name: '에어컨 벽 창가 콘센트' }, { x: 0, z: 350, name: '에어컨 벽 문 쪽 콘센트' } ];
+// 창 쪽 구석 3구(사진), 문 벽에서 40cm 콘센트(실측)
+const OUTLETS = [ { x: 0, z: 55, name: '에어컨 벽 창가 콘센트' }, { x: 0, z: 390, name: '에어컨 벽 문 쪽 콘센트' } ];
 
 // est: 사진으로 어림한 크기 (나머지는 상품 실측)
 const CAT0 = {
@@ -304,15 +304,15 @@ const PRESETS = {
     items: [ ...WARD_E.slice(0, 2), { ...P('desk',196,32,0), flip: true }, P('nightstand',380,347.5,270), P('bed',293,242,270),
       P('bookshelf',12,260,90), P('cabinet',20,140,90), P('slim',29.25,200.25,90), P('table',50,340,0), ...EST_OFF ] },
   C: { tag: 'C', name: '침대 머리 콘센트 벽', badge: '선택', notes: [
-      '퀸 침대 머리를 에어컨 벽 문 쪽 콘센트 앞에 붙였어요. 충전 헤드보드 플러그를 바로 뒤 콘센트에 꽂을 수 있어요',
-      '분전반은 헤드보드(101cm) 위쪽에 있어서 그대로 손이 닿아요',
+      '퀸 침대 머리를 에어컨 벽에 붙여 문 벽에서 40cm 콘센트를 헤드보드 끝 바로 뒤에 두었어요. 침대와 문 벽 사이 28cm 틈으로 손이 닿아 충전 플러그를 꽂기 쉬워요',
+      '협탁은 침대 머리 창문 쪽에, 5단 책장은 그 옆에 붙였어요. 분전반은 헤드보드(101cm) 위라 그대로 손이 닿아요',
       'H형 책상은 에어컨 벽 창가 3구 콘센트 바로 앞에 두고, 선반 탑은 창문 쪽 끝에 와요',
       '반타원 테이블은 창 아래에 세로로 놓고, 의자 2개를 양옆에 마주 보게 두었어요. 둥근 쪽이 방 안을 향해요',
       '침대 발치에서 옷장 벽까지 1.2m 넘게 비어서 문에서 들어오는 길이 넓어요',
       ['con', '책상 위에 에어컨이 있어 여름엔 바람 방향을 위로 두세요'],
       ['con', '책상 의자와 식탁 의자 사이가 가까워서 둘 다 빼면 좁아요. 안 쓰는 의자는 밀어 넣어 두세요'] ],
-    items: [ ...WARD_E, P('bed',107,298,90), P('nightstand',20,403.5,90), P('desk',32,75,90),
-      P('bookshelf',12,170,90), P('cabinet',380,235,270), P('table',212,50,270),
+    items: [ ...WARD_E, P('bed',107,320,90), P('nightstand',20,216.5,90), P('desk',32,75,90),
+      P('bookshelf',12,165,90), P('cabinet',380,235,270), P('table',212,50,270),
       P('dchair1',149.5,50,90), P('dchair2',274.5,50,270), ...offExcept('dchair1','dchair2') ] },
   cur: { tag: '지금', name: '사진 속 지금 상태', notes: [
       '사진을 보고 지금 놓인 자리를 옮겨 놓았어요. 방 모델이 실제와 맞는지 먼저 확인해 보세요',
@@ -562,7 +562,7 @@ bx(gW, 20, 28, 85, 10, 166, 50, mat('#f7f7f4', { roughness: 0.4 }));
 bx(gW, 1, 3, 80, 20.2, 168, 50, mat('#6f7579'));
 for (const z of [45, 55, 65]) bx(gW, 1.2, 11, 7, 0.6, 24, z, beige);
 bx(gW, 1.2, 9, 7, 0.6, 145, 102, beige);
-for (const z of [342, 358]) bx(gW, 1.2, 11, 7, 0.6, 22, z, beige);
+for (const z of [383, 397]) bx(gW, 1.2, 11, 7, 0.6, 22, z, beige);
 bx(gW, 3, 22, 17, 1.5, 140, 345, mat('#d8cfb4'));
 bx(gW, 0.6, 12, 11, 3.2, 146, 345, mat('#2f6b4f', { roughness: 0.3 }));
 // south wall: sliding door, rebuilt whenever its position changes
