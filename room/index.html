@@ -113,6 +113,13 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
 .sizes.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .door-ctl { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; }
 .door-open { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }
+.flist { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.flist label { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; padding: 3px 4px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+.flist label:hover { background: var(--accent-soft); }
+.flist input { accent-color: var(--accent); margin: 0; }
+.flist .dim { font-family: var(--f-mono); font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.flist .real { font-size: 10px; font-weight: 600; color: var(--ok); margin-left: 4px; }
+.flist .is-off { color: var(--muted); text-decoration: line-through; }
 .legend { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13px; }
 .legend li { display: grid; grid-template-columns: 12px 1fr auto; gap: 8px; align-items: center; }
 .legend i { width: 12px; height: 12px; border-radius: 3px; display: block; border: 1px solid var(--line); }
@@ -165,9 +172,14 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); ou
         <h3>배치 점검 <span class="count" id="c-count"></span></h3>
         <ul class="checks" id="checks"></ul>
       </section>
+      <section>
+        <h3>가구 목록 <span class="count" id="l-count"></span></h3>
+        <ul class="flist" id="flist"></ul>
+        <p class="fine">체크를 끄면 이 배치안에서 뺀 가구가 돼요. 실측 표시가 없는 건 사진으로 어림한 크기예요.</p>
+      </section>
       <section id="sel">
         <h3>선택한 가구</h3>
-        <p class="sel-empty" id="sel-empty">3D 화면에서 가구를 눌러 선택하세요. 사진으로 어림한 크기라서 실제 치수로 고쳐주면 점검도 정확해져요.</p>
+        <p class="sel-empty" id="sel-empty">3D 화면이나 가구 목록에서 가구를 고르세요. 크기를 고치면 3D와 점검이 바로 바뀌어요.</p>
         <div id="sel-body" hidden>
           <div class="sel-name" id="sel-name"></div>
           <div class="sizes">
@@ -253,62 +265,77 @@ const ZONE = {
 };
 const OUTLETS = [ { x: 0, z: 55, name: '에어컨 벽 콘센트' }, { x: 0, z: 405, name: '에어컨 벽 구석 콘센트' } ];
 
+// est: 사진으로 어림한 크기 (나머지는 상품 실측)
 const CAT0 = {
-  wardrobe:  { name: '옷장',          w: 100, d: 60, h: 195, kind: 'wardrobe', swing: 50 },
-  bookshelf: { name: '책장',          w: 60,  d: 30, h: 180, kind: 'bookshelf' },
-  desk:      { name: '책상',          w: 120, d: 60, h: 75,  kind: 'desk' },
-  chair:     { name: '의자',          w: 55,  d: 55, h: 90,  kind: 'chair', tuck: true },
-  bed:       { name: '매트리스 (SS)', w: 110, d: 200, h: 20, kind: 'bed' },
-  grayshelf: { name: '회색 4단 선반', w: 40,  d: 30, h: 120, kind: 'grayshelf' },
-  rack:      { name: '행거',          w: 80,  d: 45, h: 150, kind: 'rack' },
-  mirror:    { name: '전신거울',      w: 50,  d: 40, h: 155, kind: 'mirror' },
-  drawer:    { name: '서랍장·바구니', w: 50,  d: 40, h: 95,  kind: 'drawer' },
-  table:     { name: '원형 테이블',   w: 70,  d: 70, h: 40,  kind: 'table' },
-  lamp:      { name: '스탠드 조명',   w: 30,  d: 30, h: 150, kind: 'lamp' },
-  carrier:   { name: '캐리어',        w: 40,  d: 25, h: 65,  kind: 'carrier' },
+  wardrobeA:  { name: '옷장 160 (선반형 칸)', w: 80, d: 62, h: 194, kind: 'wardrobe', swing: 40, doors: 2 },
+  wardrobeB:  { name: '옷장 160 (긴옷 칸)',   w: 80, d: 62, h: 194, kind: 'wardrobe', swing: 40, doors: 2 },
+  slim:       { name: '400 옷장',           w: 40.5, d: 58.5, h: 188, kind: 'wardrobe', swing: 40, doors: 1 },
+  cabinet:    { name: '주방 수납장',        w: 60, d: 40, h: 180, kind: 'cabinet', swing: 30 },
+  bookshelf:  { name: '5단 책장',           w: 60, d: 24, h: 179, kind: 'bookshelf' },
+  bed:        { name: '퀸 침대',            w: 164, d: 214, h: 101, kind: 'bed' },
+  nightstand: { name: '협탁',               w: 43, d: 40, h: 60, kind: 'nightstand' },
+  table:      { name: '반타원 테이블',      w: 100, d: 80, h: 73, kind: 'dtable' },
+  desk:       { name: '책상',               w: 120, d: 60, h: 75, kind: 'desk', est: true },
+  chair:      { name: '의자',               w: 55, d: 55, h: 90, kind: 'chair', tuck: true, est: true },
+  grayshelf:  { name: '회색 4단 선반',      w: 40, d: 30, h: 120, kind: 'grayshelf', est: true },
+  mirror:     { name: '전신거울',           w: 50, d: 40, h: 155, kind: 'mirror', est: true },
+  drawer:     { name: '서랍장·바구니',      w: 50, d: 40, h: 95, kind: 'drawer', est: true },
+  lamp:       { name: '스탠드 조명',        w: 30, d: 30, h: 150, kind: 'lamp', est: true },
+  rack:       { name: '행거',               w: 80, d: 45, h: 150, kind: 'rack', est: true },
+  topper:     { name: '매트리스 토퍼 (SS)', w: 110, d: 200, h: 12, kind: 'topper', est: true },
+  carrier:    { name: '캐리어',             w: 40, d: 25, h: 65, kind: 'carrier', est: true },
 };
 
-const P = (id, x, z, rot) => ({ id, x, z, rot });
+const P = (id, x, z, rot, off = false) => ({ id, x, z, rot, off });
+const WARD_E = [P('wardrobeA',369,40,270), P('wardrobeB',369,120,270), P('slim',370.75,180.25,270)];
 const PRESETS = {
-  A: { tag: 'A', name: '창가 책상형', badge: '추천', notes: [
-      '책상을 창 아래에 둬서 낮에는 자연광으로 공부·작업',
-      '매트리스는 에어컨 벽에 붙이고 머리를 문 쪽으로 둬서 에어컨 바람이 얼굴에 바로 오지 않아요',
-      '방 가운데가 넓게 비어서 테이블을 펴고 앉거나 운동할 자리가 생겨요',
-      ['con', '창이 모니터 뒤에 있어 한낮엔 눈부실 수 있어요. 블라인드를 반쯤 내리면 해결돼요'],
-      ['con', '창 쪽엔 콘센트가 없어서 에어컨 벽 콘센트에서 멀티탭을 2m 정도 끌어와야 해요'] ],
-    items: [ P('wardrobe',370,50,270), P('desk',230,30,0), P('chair',230,90,180), P('bookshelf',130,15,0),
-      P('drawer',70,20,0), P('bed',55,320,180), P('grayshelf',15,195,90), P('mirror',20,130,90),
-      P('rack',377.5,150,270), P('carrier',387.5,225,270), P('table',230,260,0), P('lamp',125,215,0) ] },
-  B: { tag: 'B', name: '코너 책상형', notes: [
-      '책상은 지금처럼 인터폰 아래 구석에 두고, 매트리스를 창문 아래로 옮긴 안이에요',
-      '책상·책장·행거·옷장이 한 벽에 모여서 수납 동선이 짧아요',
-      '에어컨 벽이 비어서 거울과 서랍장 같은 단장 공간으로 쓰기 좋아요',
-      ['con', '창 바로 아래에서 자면 겨울에 외풍과 바깥 소음이 느껴질 수 있어요'],
-      ['con', '책상 쪽 콘센트는 사진에서 확인되지 않았어요. 옷장 벽 아래쪽에 콘센트가 있는지 확인해 주세요'] ],
-    items: [ P('wardrobe',370,50,270), P('bed',185,55,270), P('desk',370,365,270), P('chair',312.5,365,90),
-      P('bookshelf',385,260,270), P('rack',377.5,150,270), P('carrier',387.5,210,270),
-      P('grayshelf',15,150,90), P('drawer',20,225,90), P('mirror',20,290,90), P('table',190,260,0), P('lamp',20,400,0) ] },
-  C: { tag: 'C', name: '침대 옷장 옆형', notes: [
-      '매트리스를 옷장 벽에 붙이고, 책상은 콘센트가 있는 에어컨 벽 쪽으로 옮긴 안이에요',
-      '책상 바로 옆에 콘센트 3구가 있어서 선 정리가 가장 깔끔해요',
-      '자는 공간과 책상이 방 양쪽으로 나뉘어서 생활이 구분돼요',
-      ['con', '책상 위쪽에 에어컨이 있어 여름엔 바람이 머리 위로 바로 와요. 바람 방향을 위로 두세요'],
-      ['con', '행거가 문 옆에 오니 들어올 때 옷이 먼저 보여요. 커튼으로 가리면 깔끔해요'] ],
-    items: [ P('wardrobe',370,50,270), P('bed',345,205,0), P('desk',30,75,90), P('chair',90,75,270),
-      P('bookshelf',15,175,90), P('drawer',20,240,90), P('mirror',20,300,90), P('lamp',20,400,0),
-      P('grayshelf',130,15,0), P('rack',360,407.5,180), P('carrier',290,417.5,0), P('table',190,260,0) ] },
+  A: { tag: 'A', name: '침대 머리 에어컨 벽', badge: '추천', notes: [
+      '퀸 침대 머리를 에어컨 벽에 붙이고, 책상은 창 아래에 둔 안이에요',
+      '옷장 160과 400 옷장이 옷장 벽에 한 줄로 서서 옷이 한곳에 모여요',
+      '침대 발치와 옷장 사이에 85cm 통로가 남고, 반타원 테이블은 옷장 벽 쪽에 붙어요',
+      '주방 수납장과 5단 책장은 문 옆 벽에 둬서 주방 쪽 동선이 짧아요',
+      ['con', '협탁은 침대 창문 쪽에 하나만 들어가요'],
+      ['con', '창 쪽엔 콘센트가 없어서 책상까지 멀티탭을 1.7m 정도 끌어와야 해요'] ],
+    items: [ ...WARD_E, P('mirror',380,230,270), P('table',350,310,180), P('cabinet',370,410,180), P('bookshelf',300,418,180),
+      P('bed',107,242,90), P('nightstand',20,134.5,90), P('desk',225,30,0), P('chair',225,90,180),
+      P('grayshelf',15,20,90), P('drawer',65,20,0), P('lamp',60,345,0),
+      P('rack',100,405,180,true), P('topper',200,230,0,true), P('carrier',300,300,0,true) ] },
+  B: { tag: 'B', name: '침대 옷장 벽', notes: [
+      '옷장을 에어컨 벽으로 옮기고, 퀸 침대 머리를 맞은편 옷장 벽에 붙인 안이에요',
+      '문으로 들어오자마자 옷장이 옆에 있어서 옷 갈아입는 동선이 짧아요',
+      '반타원 테이블이 문 옆 구석에 와서 주방에서 음식 들고 오기 편해요',
+      '침대 양옆에 85cm 안팎 통로가 남아요',
+      ['con', '옷장 160을 옮겨야 해요. 무거우니 문짝을 떼고 옮기세요'],
+      ['con', '인터폰이 침대 옆이라 밤에 울리면 크게 들려요'] ],
+    items: [ P('wardrobeA',31,140,90), P('wardrobeB',31,220,90), P('slim',29.25,280.25,90),
+      P('desk',230,30,0), P('chair',230,90,180), P('bed',293,242,270), P('nightstand',380,134.5,270),
+      P('bookshelf',388,70,270), P('drawer',325,20,0), P('cabinet',370,410,180), P('table',60,360,0),
+      P('mirror',255,410,180), P('grayshelf',310,415,180), P('lamp',120,300,0),
+      P('rack',100,405,180,true), P('topper',200,230,0,true), P('carrier',300,300,0,true) ] },
+  C: { tag: 'C', name: '침대 문 벽 구석', notes: [
+      '퀸 침대를 문 벽 쪽 구석에 넣고, 책상·책장·수납장을 콘센트가 있는 에어컨 벽에 모은 안이에요',
+      '책상 바로 옆에 콘센트 3구가 있어서 선 정리가 깔끔해요',
+      '반타원 테이블을 창 아래 밝은 자리에 둬서 식사·작업에 좋아요',
+      ['con', '침대 머리 옆에 협탁 자리가 없어서 협탁은 목록에서 빼 두었어요'],
+      ['con', '에어컨이 책상 바로 위라 여름엔 바람 방향을 위로 두세요'] ],
+    items: [ ...WARD_E, P('bed',318,323,180), P('desk',30,75,90), P('chair',90,75,270),
+      P('bookshelf',12,170,90), P('cabinet',20,230,90), P('mirror',20,290,90), P('grayshelf',15,405,90),
+      P('table',220,40,0), P('drawer',135,20,0), P('lamp',215,200,0),
+      P('nightstand',120,300,0,true), P('rack',100,405,180,true), P('topper',200,230,0,true), P('carrier',300,300,0,true) ] },
   cur: { tag: '지금', name: '사진 속 지금 상태', notes: [
       '사진을 보고 지금 놓인 자리를 옮겨 놓았어요. 방 모델이 실제와 맞는지 먼저 확인해 보세요',
-      '세워둔 매트리스는 짐이 쌓인 자리에 눕혀서 표시했어요',
+      '책상 옆에 있는 선반 달린 흰 장을 주방 수납장, 좁고 긴 흰 장을 400 옷장으로 보았어요',
+      '사진에 없는 퀸 침대·협탁·5단 책장·반타원 테이블은 가구 목록에서 꺼 두었어요',
       ['con', '전신거울이 창문 앞을 막고 있고, 문 옆에 짐이 몰려 있어요'] ],
-    items: [ P('wardrobe',370,50,270), P('bookshelf',370,270,0), P('desk',370,355,270), P('grayshelf',35,415,0),
-      P('chair',60,360,0), P('rack',130,407,180), P('bed',200,235,0), P('mirror',150,40,0),
-      P('drawer',225,25,0), P('table',110,35,0), P('lamp',240,330,0), P('carrier',255,70,0) ] },
+    items: [ P('wardrobeA',369,40,270), P('wardrobeB',369,120,270), P('slim',360,215,0), P('cabinet',370,270,0),
+      P('desk',370,355,270), P('grayshelf',35,415,0), P('chair',60,360,0), P('rack',130,407,180),
+      P('topper',200,235,0), P('mirror',150,40,0), P('drawer',225,25,0), P('lamp',240,350,0), P('carrier',255,70,0),
+      P('bed',107,242,90,true), P('nightstand',20,134.5,90,true), P('bookshelf',300,418,180,true), P('table',350,310,180,true) ] },
 };
 const ORDER = ['A', 'B', 'C', 'cur'];
 
 // ---------- state
-const KEY = 'room-planner-v1';
+const KEY = 'room-planner-v2';
 // 미닫이문: 문틀 시작(에어컨 벽에서), 문틀 폭, 드나드는 쪽(W/E 절반)
 const DOOR0 = { x: 50, w: 170, open: 'E' };
 const DOOR = { ...DOOR0 };
@@ -323,6 +350,7 @@ if (saved.door) Object.assign(DOOR, saved.door);
 if (saved.sizes) for (const [id, s] of Object.entries(saved.sizes)) if (CAT[id]) Object.assign(CAT[id], s);
 const layouts = {};
 for (const k of ORDER) layouts[k] = (saved.layouts && saved.layouts[k]) ? saved.layouts[k] : PRESETS[k].items.map(i => ({ ...i }));
+const live = () => layouts[current].filter(i => !i.off);
 let current = ORDER.includes(saved.current) ? saved.current : 'A';
 let selected = null;
 let showLabels = true, showZones = true, view = '3d';
@@ -356,7 +384,7 @@ const dirName = f => f.z === -1 ? `${WALL.N} 쪽` : f.z === 1 ? `${WALL.S} 쪽` 
 
 // ---------- checks
 function evaluate() {
-  const items = layouts[current];
+  const items = live();
   const out = [];
   const R = items.map(it => ({ it, r: rect(it), c: CAT[it.id] }));
   const bad = new Set();
@@ -400,7 +428,7 @@ function evaluate() {
   return { out, bad };
 }
 function floorStats() {
-  const rs = layouts[current].map(rect); let used = 0, n = 0;
+  const rs = live().map(rect); let used = 0, n = 0;
   for (let x = 2.5; x < ROOM.W; x += 5) for (let z = 2.5; z < ROOM.D; z += 5) {
     n++; if (rs.some(r => x > r.x0 && x < r.x1 && z > r.z0 && z < r.z1)) used++;
   }
@@ -577,20 +605,30 @@ function zonePlane(r, color, op = 0.22) {
 function rebuildZones() {
   zoneGroup.clear();
   zoneGroup.add(zonePlane(doorZone(), '#2c5ea8'));
-  for (const it of layouts[current]) { const z = swingZone(it); if (z) zoneGroup.add(zonePlane(z, '#2c5ea8', 0.16)); }
+  for (const it of live()) { const z = swingZone(it); if (z) zoneGroup.add(zonePlane(z, '#2c5ea8', 0.16)); }
   zoneGroup.visible = showZones;
 }
 
 // ---------- furniture builders (local cm, footprint centered, front = +z)
 const C = { white: mat('#f2f2ee'), white2: mat('#e6e6e1'), edge: mat('#b98a5c'), gray: mat('#a7a9a6'), dark: mat('#2b2d2f'), steel: mat('#c9ccce', { metalness: 0.5, roughness: 0.35 }) };
+function openBox(g, c, m, back, levels) {
+  const t = 1.8; for (const s of [-1, 1]) bx(g, t, c.h, c.d, s * (c.w / 2 - t / 2), 0, 0, m);
+  bx(g, c.w - 2 * t, t, c.d, 0, 2, 0, m); bx(g, c.w, t, c.d, 0, c.h - t, 0, m);
+  bx(g, c.w - 2 * t, c.h, 0.8, 0, 0, -c.d / 2 + 0.4, back);
+  for (const l of levels) bx(g, c.w - 2 * t, t, c.d - 1, 0, l * c.h, 0.5, m);
+}
 const BUILD = {
-  wardrobe(g, c) { bx(g, c.w, c.h, c.d, 0, 0, 0, C.white); bx(g, 0.5, c.h - 8, 0.5, 0, 4, c.d / 2, C.white2); for (const s of [-1, 1]) bx(g, 1.4, 22, 1.4, s * 4.5, c.h * 0.45, c.d / 2 + 0.7, C.steel); },
-  bookshelf(g, c) {
-    const t = 2; for (const s of [-1, 1]) bx(g, t, c.h, c.d, s * (c.w / 2 - t / 2), 0, 0, C.white);
-    bx(g, c.w, 1, c.d, 0, 0, 0, C.white); bx(g, c.w - 2 * t, c.h, 1, 0, 0, -c.d / 2 + 0.5, C.white2);
-    for (let i = 1; i <= 4; i++) bx(g, c.w - 2 * t, t, c.d - 1, 0, i * (c.h - t) / 4, 0.5, C.white);
-    for (const s of [-1, 1]) bx(g, 0.4, c.h, 0.4, s * (c.w / 2 - t / 2), 0, c.d / 2, C.edge);
+  wardrobe(g, c) {
+    bx(g, c.w, c.h - 3, c.d, 0, 3, 0, C.white); bx(g, c.w - 4, 3, c.d - 6, 0, 0, -2, C.white2);
+    if (c.doors === 2) { bx(g, 0.5, c.h - 10, 0.5, 0, 6, c.d / 2, C.white2); for (const s of [-1, 1]) bx(g, 1.4, 22, 1.4, s * 3.5, c.h * 0.45, c.d / 2 + 0.7, C.steel); }
+    else bx(g, 1.4, 22, 1.4, c.w / 2 - 4, c.h * 0.45, c.d / 2 + 0.7, C.steel);
   },
+  cabinet(g, c) {
+    openBox(g, c, C.white, C.white2, [0.17, 0.33, 0.58, 0.83]);
+    const door = (y0, y1) => { for (const s of [-1, 1]) { bx(g, c.w / 2 - 1, (y1 - y0) * c.h - 1, 1.6, s * c.w / 4, y0 * c.h + 0.5, c.d / 2 + 0.8, mat('#f7f7f4')); bx(g, 1.2, 10, 1.2, s * 3, y0 * c.h + 6, c.d / 2 + 2, C.steel); } };
+    door(0.83, 1); door(0, 0.33);
+  },
+  bookshelf(g, c) { const w = mat('#b98552', { roughness: 0.65 }); openBox(g, c, w, mat('#a87445'), [0.2, 0.4, 0.6, 0.8]); },
   desk(g, c) {
     bx(g, c.w, 3, c.d, 0, c.h - 3, 0, C.white); bx(g, c.w, 0.6, c.d, 0, c.h - 3.3, 0, C.edge);
     for (const sx of [-1, 1]) for (const sz of [-1, 1]) bx(g, 3, c.h - 3, 3, sx * (c.w / 2 - 3), 0, sz * (c.d / 2 - 3), C.white);
@@ -603,9 +641,23 @@ const BUILD = {
     for (const s of [-1, 1]) bx(g, 3, 3, c.d * 0.5, s * c.w * 0.42, 62, 0, C.white);
   },
   bed(g, c) {
-    bx(g, c.w, c.h * 0.45, c.d, 0, 0, 0, mat('#8f9599')); bx(g, c.w - 2, c.h * 0.55, c.d - 2, 0, c.h * 0.45, 0, mat('#dcdfe0'));
-    bx(g, c.w * 0.62, 9, 32, 0, c.h, -c.d / 2 + 24, mat('#fafaf8'));
-    bx(g, c.w - 1, 3, c.d * 0.55, 0, c.h, c.d / 2 - c.d * 0.275 - 2, mat('#9fb6cf'));
+    const fr = mat('#ecebe7'), hd = 13, foot = 28.5;
+    bx(g, c.w, c.h, hd, 0, 0, -c.d / 2 + hd / 2, fr);
+    bx(g, c.w * 0.7, 14, 1, 0, c.h - 30, -c.d / 2 + hd + 0.5, mat('#b98552'));
+    bx(g, c.w, foot, c.d - hd, 0, 0, hd / 2, fr);
+    bx(g, c.w - 8, 24, c.d - hd - 8, 0, foot - 4, hd / 2, mat('#f6f6f3'));
+    for (const s of [-1, 1]) bx(g, c.w * 0.38, 12, 38, s * c.w * 0.22, foot + 20, -c.d / 2 + hd + 26, mat('#fbfbf9'));
+    bx(g, c.w - 4, 4, c.d * 0.5, 0, foot + 20, c.d / 2 - c.d * 0.25 - 4, mat('#9fb6cf'));
+  },
+  topper(g, c) { bx(g, c.w, c.h, c.d, 0, 0, 0, mat('#d9dcdd')); bx(g, c.w * 0.6, 8, 30, 0, c.h, -c.d / 2 + 22, mat('#fafaf8')); },
+  nightstand(g, c) {
+    const w = mat('#8a5a35', { roughness: 0.6 }); openBox(g, c, w, mat('#74482a'), []);
+    bx(g, c.w - 4, c.h * 0.28, c.d - 2, 0, c.h * 0.66, 1, w); bx(g, c.w - 4.4, c.h * 0.26, 0.6, 0, c.h * 0.67, c.d / 2, mat('#9b6a42'));
+  },
+  dtable(g, c) {
+    const r = c.d / 2, top = mat('#fbfbf9', { roughness: 0.4 });
+    bx(g, c.w - r, 2.5, c.d, -r / 2, c.h - 2.5, 0, top); cyl(g, r, 2.5, c.w / 2 - r, c.h - 2.5, 0, top);
+    for (const [x, z] of [[-c.w / 2 + 8, -c.d / 2 + 8], [-c.w / 2 + 8, c.d / 2 - 8], [c.w / 2 - r * 0.55, -r * 0.7], [c.w / 2 - r * 0.55, r * 0.7]]) cyl(g, 1.8, c.h - 2.5, x, 0, z, C.white);
   },
   grayshelf(g, c) {
     for (let i = 0; i < 4; i++) bx(g, c.w, 2, c.d, 0, 4 + i * (c.h - 6) / 3, 0, C.gray);
@@ -626,7 +678,6 @@ const BUILD = {
     bx(g, c.w, c.h * 0.48, c.d, 0, 0, 0, mat('#ecebe6')); bx(g, c.w, c.h * 0.5, c.d, 0, c.h * 0.5, 0, C.white);
     bx(g, c.w * 0.9, 0.6, 0.6, 0, c.h * 0.75, c.d / 2 + 0.3, C.white2); bx(g, 12, 12, 12, -c.w * 0.2, c.h, 0, mat('#ffffff'));
   },
-  table(g, c) { cyl(g, c.w / 2, 2.5, 0, c.h - 2.5, 0, C.white); cyl(g, 2.5, c.h - 2.5, 0, 0, 0, C.white); cyl(g, 16, 2, 0, 0, 0, C.white); },
   lamp(g, c) { cyl(g, c.w / 2.3, 2, 0, 0, 0, C.white); cyl(g, 1.2, c.h - 6, 0, 2, 0, C.white); bx(g, 9, 5, 20, 0, c.h - 6, 6, new THREE.MeshStandardMaterial({ color: '#ffffff', emissive: '#fff3d8', emissiveIntensity: 0.6 })); },
   carrier(g, c) { bx(g, c.w, c.h - 4, c.d, 0, 4, 0, mat('#25282b', { roughness: 0.4 })); bx(g, 12, 6, 3, 0, c.h, 0, C.dark); for (const s of [-1, 1]) cyl(g, 2, 4, s * (c.w / 2 - 4), 0, 0, C.dark); },
 };
@@ -643,7 +694,7 @@ function buildItem(it) {
   furniture.add(g); meshes[it.id] = g; placeItem(it);
 }
 function placeItem(it) { const g = meshes[it.id]; g.position.set(it.x * S, 0, it.z * S); g.rotation.y = norm(it.rot) * Math.PI / 180; }
-function rebuildAll() { for (const id in meshes) { furniture.remove(meshes[id]); delete meshes[id]; } for (const it of layouts[current]) buildItem(it); rebuildZones(); }
+function rebuildAll() { for (const id in meshes) { furniture.remove(meshes[id]); delete meshes[id]; } for (const it of live()) buildItem(it); rebuildZones(); renderList(); }
 
 // footprint outlines
 const marks = new THREE.Group(); scene.add(marks);
@@ -655,7 +706,7 @@ function outline(r, color, y = 0.006) {
 let lastBad = new Set();
 function refreshMarks() {
   marks.clear();
-  for (const it of layouts[current]) if (lastBad.has(it.id)) { const r = rect(it); marks.add(zonePlane(r, '#d0443a', 0.28)); marks.add(outline(r, '#d0443a')); }
+  for (const it of live()) if (lastBad.has(it.id)) { const r = rect(it); marks.add(zonePlane(r, '#d0443a', 0.28)); marks.add(outline(r, '#d0443a')); }
   if (selected) { const it = layouts[current].find(i => i.id === selected); if (it) { const r = rect(it); marks.add(outline({ x0: r.x0 - 2, x1: r.x1 + 2, z0: r.z0 - 2, z1: r.z1 + 2 }, '#2c5ea8', 0.008)); } }
 }
 
@@ -785,7 +836,19 @@ for (const k of ['w', 'd', 'h']) $('size-' + k).addEventListener('change', e => 
   if (!Number.isFinite(v)) { e.target.value = CAT[selected][k]; return; }
   CAT[selected][k] = Math.min(Math.max(v, lim[0]), lim[1]); e.target.value = CAT[selected][k];
   for (const key of ORDER) for (const it of layouts[key]) if (it.id === selected) clampItem(it);
-  buildItem(layouts[current].find(i => i.id === selected)); commit();
+  const cur = layouts[current].find(i => i.id === selected); if (!cur.off) buildItem(cur); renderList(); commit();
+});
+function renderList() {
+  const L = layouts[current];
+  $('flist').innerHTML = L.map(it => { const c = CAT[it.id]; return `<li><label for="inc-${it.id}"><input type="checkbox" id="inc-${it.id}" data-id="${it.id}" ${it.off ? '' : 'checked'}><span class="${it.off ? 'is-off' : ''}">${c.name}${c.est ? '' : '<span class="real">실측</span>'}</span><span class="dim">${c.w}×${c.d}×${c.h}</span></label></li>`; }).join('');
+  $('l-count').textContent = `${L.filter(i => !i.off).length}/${L.length}`;
+}
+$('flist').addEventListener('change', e => {
+  const id = e.target.dataset.id; if (!id) return;
+  const it = layouts[current].find(i => i.id === id); it.off = !e.target.checked;
+  if (it.off && selected === id) select(null);
+  clampItem(it); persist(); rebuildAll(); renderChecks();
+  if (!it.off) select(id);
 });
 function syncDoorInputs() {
   $('door-x').value = DOOR.x; $('door-w').value = DOOR.w;
@@ -815,7 +878,7 @@ $('b-reset-yes').addEventListener('click', () => {
 function layoutText() {
   const lines = [`[내 방 배치 · ${PRESETS[current].name}]`, `방 ${ROOM.W}×${ROOM.D}×${ROOM.H}cm (${WALL.N}·${WALL.S} ${ROOM.W}, ${WALL.W}·${WALL.E} ${ROOM.D})`,
     `미닫이문: ${WALL.W}에서 문틀까지 ${DOOR.x}, 문틀 폭 ${DOOR.w}, 드나드는 쪽 ${DOOR.open === 'E' ? WALL.E : WALL.W} 쪽`];
-  for (const it of layouts[current]) {
+  for (const it of live()) {
     const c = CAT[it.id], r = rect(it);
     lines.push(`- ${c.name} ${c.w}×${c.d}×${c.h} | ${WALL.W}에서 ${Math.round(r.x0)}, ${WALL.N}에서 ${Math.round(r.z0)} | 앞면 ${dirName(fdir(it))}`);
   }
