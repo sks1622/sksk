@@ -1,0 +1,36 @@
+<template>
+  <style>
+      @font-face { font-family: "Pretendard"; font-weight: 500; src: url("assets/fonts/Pretendard-Medium.woff2") format("woff2"); }
+      @font-face { font-family: "Pretendard"; font-weight: 700; src: url("assets/fonts/Pretendard-Bold.woff2") format("woff2"); }
+      @font-face { font-family: "Pretendard"; font-weight: 900; src: url("assets/fonts/Pretendard-Black.woff2") format("woff2"); }
+    #root { position: absolute; inset: 0; background: #1f2a44; font-family: "Pretendard"; overflow: hidden; }
+    #outro-q { white-space: pre-line; word-break: keep-all; position: absolute; left: 80px; top: 330px; width: 920px; font-size: 112px; line-height: 1.12; font-weight: 900; color: #efe6d6; letter-spacing: -0.035em; }
+    #outro-nums { position: absolute; left: 80px; top: 700px; display: flex; gap: 22px; }
+    .outro-n { width: 190px; height: 190px; display: flex; align-items: center; justify-content: center; font-size: 84px; font-weight: 900; color: #fffaf1; background: #b5562b; }
+    #outro-cta { position: absolute; left: 80px; top: 960px; font-size: 58px; font-weight: 700; color: #efe6d6; }
+    #outro-handle { position: absolute; left: 80px; top: 1060px; font-size: 44px; font-weight: 500; color: rgba(239,230,214,0.7); }
+  </style>
+  <div id="root" data-composition-id="outro" data-width="1080" data-height="1920">
+    <div id="outro-q" class="clip" data-start="0" data-duration="3" data-var-text="outroQuestion">몇 번 코디가
+제일 좋아요?</div>
+    <div id="outro-nums" class="clip" data-start="0" data-duration="3">
+      <div id="outro-n1" class="outro-n">01</div>
+      <div id="outro-n2" class="outro-n">02</div>
+      <div id="outro-n3" class="outro-n">03</div>
+      <div id="outro-n4" class="outro-n">04</div>
+    </div>
+    <div id="outro-cta" class="clip" data-start="0" data-duration="3" data-var-text="outroCta">댓글로 번호 남겨주세요</div>
+    <div id="outro-handle" class="clip" data-start="0" data-duration="3">@poten502</div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#outro-q", { y: 60, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power4.out" }, 0.05);
+    ["#outro-n1", "#outro-n2", "#outro-n3", "#outro-n4"].forEach((sel, i) => {
+      tl.fromTo(sel, { scale: 0.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: "back.out(2)" }, 0.4 + i * 0.09);
+    });
+    tl.fromTo("#outro-cta", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.35, ease: "power3.out" }, 0.65);
+    tl.fromTo("#outro-handle", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, 0.75);
+    tl.to("#outro-nums", { y: -8, duration: 1.4, ease: "sine.inOut" }, 1.5);
+    window.__timelines["outro"] = tl;
+  </script>
+</template>

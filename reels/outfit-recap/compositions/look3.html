@@ -1,0 +1,35 @@
+<template>
+  <style>
+      @font-face { font-family: "Pretendard"; font-weight: 500; src: url("assets/fonts/Pretendard-Medium.woff2") format("woff2"); }
+      @font-face { font-family: "Pretendard"; font-weight: 700; src: url("assets/fonts/Pretendard-Bold.woff2") format("woff2"); }
+      @font-face { font-family: "Pretendard"; font-weight: 900; src: url("assets/fonts/Pretendard-Black.woff2") format("woff2"); }
+    #root { position: absolute; inset: 0; background: #17130f; font-family: "Pretendard"; overflow: hidden; }
+    #l3-photo { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; object-fit: cover; }
+    #l3-shade { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px;
+      background: linear-gradient(180deg, rgba(23,19,15,0.55) 0%, rgba(23,19,15,0) 22%, rgba(23,19,15,0) 45%, rgba(23,19,15,0.78) 75%, rgba(23,19,15,0.85) 100%); }
+    #l3-num { position: absolute; left: 80px; top: 200px; font-size: 150px; font-weight: 900; color: #efe6d6; letter-spacing: -0.04em; }
+    #l3-items { position: absolute; left: 80px; top: 1010px; display: flex; flex-direction: column; gap: 18px; align-items: flex-start; }
+    .look-chip { font-size: 46px; font-weight: 700; color: #efe6d6; background: rgba(31,42,68,0.92); padding: 14px 28px; border-left: 12px solid #b5562b; letter-spacing: 0.01em; white-space: pre; }
+  </style>
+  <div id="root" data-composition-id="look3" data-width="1080" data-height="1920">
+    <div id="l3-photowrap" class="clip" data-start="0" data-duration="2.2">
+      <img id="l3-photo" src="assets/photos/photo3.jpg" alt="" />
+    </div>
+    <div id="l3-shade" class="clip" data-start="0" data-duration="2.2"></div>
+    <div id="l3-num" class="clip" data-start="0" data-duration="2.2">03</div>
+    <div id="l3-items" class="clip" data-start="0" data-duration="2.2">
+      <div id="l3-i1" class="look-chip">JACKET  YMC</div>
+      <div id="l3-i2" class="look-chip">VEST  Outstanding</div>
+      <div id="l3-i3" class="look-chip">SHOES  Red Wing</div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#l3-photo", { scale: 1.1 }, { scale: 1.0, duration: 2.2, ease: "power1.out" }, 0);
+    tl.fromTo("#l3-num", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.28, ease: "power4.out" }, 0.08);
+    ["#l3-i1", "#l3-i2", "#l3-i3"].forEach((sel, i) => {
+      tl.fromTo(sel, { x: -80, opacity: 0 }, { x: 0, opacity: 1, duration: 0.3, ease: "power4.out" }, 0.3 + i * 0.1);
+    });
+    window.__timelines["look3"] = tl;
+  </script>
+</template>
