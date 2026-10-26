@@ -12,9 +12,12 @@
     .cap .no { color: #c9a25a; margin-right: 22px; }
     .label { position: absolute; left: 60px; top: -64px; font-family: "IBM Plex Mono";
       font-size: 30px; color: #c9a25a; letter-spacing: 0.04em; }
-    .loupe { position: absolute; left: 650px; top: 730px; width: 360px; height: 360px; border-radius: 50%;
-      overflow: hidden; opacity: 0; border: 5px solid #f4efe6; box-shadow: 0 14px 36px rgba(0,0,0,0.45); }
-    .loupe img { position: absolute; max-width: none; }
+    .loupe { position: absolute; width: 360px; opacity: 0; }
+    .lens { position: relative; width: 360px; height: 360px; border-radius: 50%; overflow: hidden; background: #0c0b0a;
+      border: 5px solid #f4efe6; box-shadow: 0 14px 36px rgba(0,0,0,0.45); }
+    .lens img { position: absolute; max-width: none; }
+    .tag { margin-top: 14px; text-align: center; font-family: "IBM Plex Mono"; font-size: 28px; color: #f4efe6;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
   </style>
   <div data-hf-id="hf-7z9e" id="root" data-composition-id="sheet" data-width="1080" data-height="1920">
     <div data-hf-id="hf-l0g4" id="strip" class="clip" data-start="0" data-duration="10.2" data-layout-allow-overflow="">
@@ -57,17 +60,29 @@
       </div>
     </div>
     <div data-hf-id="hf-j7bx" id="loupes" class="clip" data-start="0" data-duration="10.2">
-    <div data-hf-id="hf-d72x" id="loupe1" class="loupe">
-      <img data-hf-id="hf-xxjz" src="assets/photos/photo1.jpg" alt="" style="width: 2304px; height: 2304px; left: -972px; top: -1894px;">
+    <div id="loupe1" class="loupe" style="left: 655px; top: 780px;">
+      <div class="lens">
+        <img src="assets/photos/photo1.jpg" alt="" style="width: 2496px; height: 2496px; left: -1205px; top: -2129px;" />
+      </div>
+      <div class="tag">selvedge</div>
     </div>
-    <div data-hf-id="hf-h56y" id="loupe2" class="loupe">
-      <img data-hf-id="hf-olsa" src="assets/photos/photo2.jpg" alt="" style="width: 2304px; height: 2304px; left: -1087px; top: -1917px;">
+    <div id="loupe2" class="loupe" style="left: 674px; top: 761px;">
+      <div class="lens">
+        <img src="assets/photos/photo2.jpg" alt="" style="width: 2304px; height: 2304px; left: -1202px; top: -1928px;" />
+      </div>
+      <div class="tag">faded hem</div>
     </div>
-    <div data-hf-id="hf-nawr" id="loupe3" class="loupe">
-      <img data-hf-id="hf-l9xe" src="assets/photos/photo3.jpg" alt="" style="width: 2304px; height: 2304px; left: -949px; top: -1848px;">
+    <div id="loupe3" class="loupe" style="left: 694px; top: 703px;">
+      <div class="lens">
+        <img src="assets/photos/photo3.jpg" alt="" style="width: 2496px; height: 2496px; left: -1180px; top: -1929px;" />
+      </div>
+      <div class="tag">work boots</div>
     </div>
-    <div data-hf-id="hf-ztf8" id="loupe4" class="loupe">
-      <img data-hf-id="hf-jfr4" src="assets/photos/photo4.jpg" alt="" style="width: 2304px; height: 2304px; left: -903px; top: -1986px;">
+    <div id="loupe4" class="loupe" style="left: 655px; top: 732px;">
+      <div class="lens">
+        <img src="assets/photos/photo4.jpg" alt="" style="width: 2304px; height: 2304px; left: -1041px; top: -1721px;" />
+      </div>
+      <div class="tag">suede boots</div>
     </div>
     </div>
   </div>
