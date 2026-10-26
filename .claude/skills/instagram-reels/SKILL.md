@@ -8,9 +8,9 @@ description: 인스타그램 릴스 편집. 사진이나 영상으로 9:16 릴�
 먼저 `/hyperframes` 스킬을 읽는다. 이 스킬은 이 계정(@poten502, 아메카지·워크웨어)에 맞춘 작업 순서만 다룬다.
 
 ## 템플릿
-`reels/outfit-recap/` — 후킹(2.2초) → 코디 4장(각 2.2초) → 댓글 유도(3초), 총 14초.
-- 사진: `assets/photos/photo1.jpg` ~ `photo4.jpg` (세로 4:5 사진이 가장 잘 맞음. 화면을 꽉 채우도록 잘림)
-- 문구: `index.html` 의 변수(spec, headline, outroQuestion, outroCta), 아이템 이름은 `compositions/lookN.html`
+`reels/outfit-recap/` — 6×6 필름 콘택트시트 스타일. 정사각형 사진 4장이 필름처럼 한 칸씩 넘어가고, 코디마다 루페로 신발·밑단을 확대. 4번 다음 1번으로 이어지는 루프(10.2초).
+- 사진: `assets/photos/photo1.jpg` ~ `photo4.jpg` (정사각형, 자르지 않음). 필름 입자는 media-treatment 로 grain 0.08 만 적용(색은 그대로)
+- 맨 위 한 줄: `index.html` 의 label 변수. 아이템 캡션, 루페 초점, 타이밍은 `compositions/sheet.html` (python 으로 생성한 정적 HTML, 1번 프레임과 루프용 복사본에 문구가 붙음)
 - 새 릴스는 폴더를 복사해서 만든다: `cp -r reels/outfit-recap reels/<새 이름>` (`.hyperframes/`, `renders/` 는 빼고)
 
 ## 사진 받기
@@ -30,3 +30,9 @@ description: 인스타그램 릴스 편집. 사진이나 영상으로 9:16 릴�
 - GSAP 은 CDN 이 막혀 있으므로 `assets/vendor/gsap.min.js` 를 쓴다. 한글은 `assets/fonts/` 의 Pretendard.
 - 음악은 넣지 않는다. 인스타 앱에서 업로드할 때 인기 음원을 붙이는 게 도달에 유리하고 저작권 문제도 없다.
 - 글자는 위쪽 168px 아래, 1330px 위 영역 안에 둔다(인스타 UI 가림 방지).
+
+## 이 계정의 취향 (사용자 피드백)
+- "AI 티" 나는 것 싫어함: 큰 제목 카드, 대문자 칩, 튀는 애니메이션, 계속 줌인, 댓글 구걸 멘트 금지.
+- 코디 전체가 한눈에 보여야 함: 사진을 크게 잘라 쓰지 않는다.
+- 촬영 날짜는 넣지 않는다.
+- 끝은 마지막 카드 대신 루프.
