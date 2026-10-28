@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: #0c0b0a; }
+      #root { width: 100%; height: 100%; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="32.7" data-width="1080" data-height="1920">
+      <video id="m-c01" class="clip" src="assets/cuts/c01.mp4" muted playsinline
+        data-start="0.00" data-duration="3.0" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:1;"></video>
+      <video id="m-c02" class="clip" src="assets/cuts/c02.mp4" muted playsinline
+        data-start="3.00" data-duration="3.2" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:2;"></video>
+      <video id="m-c03" class="clip" src="assets/cuts/c03.mp4" muted playsinline
+        data-start="6.20" data-duration="3.5" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:3;"></video>
+      <video id="m-c04" class="clip" src="assets/cuts/c04.mp4" muted playsinline
+        data-start="9.70" data-duration="2.0" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:4;"></video>
+      <video id="m-c05" class="clip" src="assets/cuts/c05.mp4" data-has-audio="true" playsinline
+        data-start="11.70" data-duration="3.0" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:5;"></video>
+      <video id="m-c06" class="clip" src="assets/cuts/c06.mp4" muted playsinline
+        data-start="14.70" data-duration="3.4" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:6;"></video>
+      <video id="m-c07" class="clip" src="assets/cuts/c07.mp4" muted playsinline
+        data-start="18.10" data-duration="2.6" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:7;"></video>
+      <video id="m-c08" class="clip" src="assets/cuts/c08.mp4" muted playsinline
+        data-start="20.70" data-duration="3.5" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:8;"></video>
+      <video id="m-c09" class="clip" src="assets/cuts/c09.mp4" muted playsinline
+        data-start="24.20" data-duration="2.5" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:9;"></video>
+      <img id="m-pad" class="clip" src="assets/photos/tongue-pad-card.jpg" alt=""
+        data-start="26.70" data-duration="2.0" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:10;" />
+      <video id="m-c10" class="clip" src="assets/cuts/c10.mp4" muted playsinline
+        data-start="28.70" data-duration="4.0" data-track-index="1"
+        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:11;"></video>
+      <div id="captions" data-composition-id="captions" data-composition-src="compositions/captions.html"
+        data-start="0" data-duration="32.7" data-track-index="2" data-track-kind="captions"
+        data-width="1080" data-height="1920" style="z-index: 50;"></div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+    </script>
+  </body>
+</html>
