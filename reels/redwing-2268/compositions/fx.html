@@ -1,0 +1,19 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; pointer-events: none; }
+    .sweepwrap { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }
+    .band { position: absolute; left: 0; top: -200px; width: 180px; height: 2320px;
+      background: linear-gradient(90deg, rgba(255,250,235,0) 0%, rgba(255,250,235,0.42) 50%, rgba(255,250,235,0) 100%);
+      mix-blend-mode: screen; }
+  </style>
+  <div id="root" data-composition-id="fx" data-width="1080" data-height="1920">
+      <div id="sweep1" class="clip sweepwrap" data-start="0.60" data-duration="1.2"><div id="sweep1-band" class="band"></div></div>
+      <div id="sweep2" class="clip sweepwrap" data-start="21.50" data-duration="1.2"><div id="sweep2-band" class="band"></div></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#sweep1-band", { x: -900, rotation: 18 }, { x: 1300, rotation: 18, duration: 1.1, ease: "power2.inOut" }, 0.60);
+    tl.fromTo("#sweep2-band", { x: -900, rotation: 18 }, { x: 1300, rotation: 18, duration: 1.1, ease: "power2.inOut" }, 21.50);
+    window.__timelines["fx"] = tl;
+  </script>
+</template>

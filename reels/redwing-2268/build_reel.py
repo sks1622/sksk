@@ -29,6 +29,19 @@ SCENES = [
     ("c10", "10-wear-a.mp4", 1.5, False, 0, True),
 ]
 
+# 슬로모션 (재생 속도). 0.75 = 원래의 75% 속도. 부족한 프레임은 보간해서 부드럽게 만든다.
+SPEED = {"c01": 0.75, "c07": 0.8}
+
+# 두드리는 순간(컷 안의 초)에 화면이 살짝 당겨졌다 돌아온다
+TAP_PULSE = {"c05": [0.55, 1.55, 2.5]}
+
+# 앞코 광택 위로 빛이 한 번 지나간다: (장면, 장면 시작부터 초)
+SWEEPS = [("c01", 0.6), ("c06", 0.4)]
+
+# 색보정 (HyperFrames Product Polish 기준: 소재와 광택은 지키고 대비만 살짝, 가장자리를 아주 약하게 어둡게)
+GRADING = ('{"intensity":0.75,"adjust":{"exposure":0.01,"contrast":0.08,"highlights":-0.12,"shadows":0.04,'
+           '"whites":0.02,"blacks":-0.04,"vibrance":0.03,"saturation":0.02},"details":{"vignette":0.04}}')
+
 # 주제가 바뀌는 장면 시작에 아주 작게 휙 소리
 WHOOSH_AT, WHOOSH_FILE, WHOOSH_VOLUME = ["c03", "c04", "c08", "c09"], "assets/sfx/whoosh-short.mp3", 0.3
 
@@ -72,7 +85,7 @@ for name, src, start, _, minimum, _ in SCENES:
     need = sum(caption_times[name]) + (END_HOLD if name == SCENES[-1][0] else 0)
     dur = round(max(need, minimum), 2)
     if src:
-        available = media_length(f"assets/clips/{src}") - start
+        available = (media_length(f"assets/clips/{src}") - start) / SPEED.get(name, 1)
         if dur > available:
             raise SystemExit(f"{name}: {dur:.2f}초가 필요한데 원본에 {available:.2f}초밖에 없습니다")
     durs[name] = dur
@@ -82,12 +95,19 @@ pathlib.Path("assets/cuts").mkdir(parents=True, exist_ok=True)
 for name, src, start, keep_audio, _, push in SCENES:
     if not src:
         continue
-    vf = BASE_VF
+    speed = SPEED.get(name, 1)
+    filters = []
+    if speed != 1:
+        filters += [f"setpts=PTS/{speed}", "minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:vsbmc=1"]
+    filters.append(BASE_VF.replace(",format=yuv420p", ""))
     if push:  # 1.00 → 1.05 로 아주 천천히 확대 (가운데 기준)
-        vf = (BASE_VF.replace(",format=yuv420p", "") +
-              f",scale=w='trunc(1080*(1+0.05*t/{durs[name]})/2)*2':h=-2:eval=frame,crop=1080:1920,format=yuv420p")
-    cmd = ["ffmpeg", "-loglevel", "error", "-y", "-ss", str(start), "-i", f"assets/clips/{src}", "-t", str(durs[name]),
-           "-vf", vf, "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-g", "15", "-movflags", "+faststart"]
+        filters.append(f"scale=w='trunc(1080*(1+0.05*t/{durs[name]})/2)*2':h=-2:eval=frame,crop=1080:1920")
+    if name in TAP_PULSE:  # 두드릴 때마다 3.5% 당겨졌다 0.1초 만에 돌아온다
+        bumps = "+".join(f"exp(-pow((t-{tt})/0.07,2))" for tt in TAP_PULSE[name])
+        filters.append(f"scale=w='trunc(1080*(1+0.035*({bumps}))/2)*2':h=-2:eval=frame,crop=1080:1920")
+    filters.append("format=yuv420p")
+    cmd = ["ffmpeg", "-loglevel", "error", "-y", "-ss", str(start), "-i", f"assets/clips/{src}",
+           "-t", str(round(durs[name] * speed, 3)), "-vf", ",".join(filters), "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-g", "15", "-movflags", "+faststart"]
     cmd += ["-c:a", "aac", "-b:a", "160k"] if keep_audio else ["-an"]
     subprocess.run(cmd + [f"assets/cuts/{name}.mp4"], check=True)
 
@@ -109,7 +129,33 @@ for n, name in enumerate(WHOOSH_AT, 1):
     media.append(f'      <audio id="sfx-whoosh{n}" src="{WHOOSH_FILE}" data-start="{max(0, starts[name] - 0.12):.2f}" '
                  f'data-duration="0.57" data-volume="{WHOOSH_VOLUME}" data-track-index="3"></audio>')
 
-# 4) 자막
+# 4) 빛 지나가기
+sweep_els, sweep_tweens = [], []
+for n, (scene, offset) in enumerate(SWEEPS, 1):
+    a = starts[scene] + offset
+    sweep_els.append(f'      <div id="sweep{n}" class="clip sweepwrap" data-start="{a:.2f}" data-duration="1.2">'
+                     f'<div id="sweep{n}-band" class="band"></div></div>')
+    sweep_tweens.append(f'    tl.fromTo("#sweep{n}-band", {{ x: -900, rotation: 18 }}, {{ x: 1300, rotation: 18, duration: 1.1, ease: "power2.inOut" }}, {a:.2f});')
+fx = f'''<template>
+  <style>
+    #root {{ position: absolute; inset: 0; pointer-events: none; }}
+    .sweepwrap {{ position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: hidden; }}
+    .band {{ position: absolute; left: 0; top: -200px; width: 180px; height: 2320px;
+      background: linear-gradient(90deg, rgba(255,250,235,0) 0%, rgba(255,250,235,0.42) 50%, rgba(255,250,235,0) 100%);
+      mix-blend-mode: screen; }}
+  </style>
+  <div id="root" data-composition-id="fx" data-width="1080" data-height="1920">
+{chr(10).join(sweep_els)}
+  </div>
+  <script>
+    const tl = gsap.timeline({{ paused: true }});
+{chr(10).join(sweep_tweens)}
+    window.__timelines["fx"] = tl;
+  </script>
+</template>
+'''
+
+# 5) 자막
 groups, tweens, k = [], [], 0
 for scene, lines, sub, style in CAPTIONS:
     a = starts[scene]
@@ -170,8 +216,11 @@ index = f'''<!doctype html>
   <body>
     <div id="root" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1080" data-height="1920">
 {chr(10).join(media)}
+      <div id="fx" data-composition-id="fx" data-composition-src="compositions/fx.html"
+        data-start="0" data-duration="{total}" data-track-index="2" data-track-kind="graphics"
+        data-width="1080" data-height="1920" style="z-index: 40;"></div>
       <div id="captions" data-composition-id="captions" data-composition-src="compositions/captions.html"
-        data-start="0" data-duration="{total}" data-track-index="2" data-track-kind="captions"
+        data-start="0" data-duration="{total}" data-track-index="4" data-track-kind="captions"
         data-width="1080" data-height="1920" style="z-index: 50;"></div>
     </div>
     <script>
@@ -183,7 +232,10 @@ index = f'''<!doctype html>
 '''
 
 pathlib.Path("compositions/captions.html").write_text(captions)
+pathlib.Path("compositions/fx.html").write_text(fx)
 pathlib.Path("index.html").write_text(index)
+subprocess.run(["npx", "--yes", "hyperframes@0.8.203", "media-treatment", "--selector", "video", "--grading", GRADING,
+                "--apply", "--json"], check=True, capture_output=True)
 print("total", total)
 for scene, lines, _, _ in CAPTIONS:
     for line, sec in zip(lines, caption_times[scene]):
