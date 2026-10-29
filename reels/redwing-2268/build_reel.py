@@ -66,6 +66,8 @@ for scene, lines, sub, style in CAPTIONS:
         groups.append(f'''      <div id="cap{k}" class="{cls}" data-start="{a}" data-duration="{round(b - a, 2)}">
         <div id="cap{k}-in" class="in"><div class="main">{line}</div>{subhtml}</div>
       </div>''')
+        if a == 0:
+            continue  # 0초 프레임이 커버가 되므로 첫 자막은 처음부터 보인다
         tweens.append(f'    tl.fromTo("#cap{k}-in", {{ opacity: 0, y: 8 }}, '
                       f'{{ opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }}, {a});')
 
