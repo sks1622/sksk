@@ -36,7 +36,7 @@ SPEED = {"c01": 0.75, "c07": 0.8}
 TAP_PULSE = {"c05": [0.55, 1.55, 2.5]}
 
 # 앞코 광택 위로 빛이 한 번 지나간다: (장면, 장면 시작부터 초)
-SWEEPS = [("c01", 0.6), ("c06", 0.4)]
+SWEEPS = [("c01", 0.6)]  # "앞코가 둥글고" 장면의 빛은 사용자가 별로라고 해서 뺐다
 
 # 색보정 (HyperFrames Product Polish 기준: 소재와 광택은 지키고 대비만 살짝, 가장자리를 아주 약하게 어둡게)
 GRADING = ('{"intensity":0.75,"adjust":{"exposure":0.01,"contrast":0.08,"highlights":-0.12,"shadows":0.04,'
