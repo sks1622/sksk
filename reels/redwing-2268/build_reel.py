@@ -1,88 +1,130 @@
-"""index.html(영상 배치)과 compositions/captions.html(자막)을 만든다.
+"""2268 리뷰 릴스를 만든다: 장면 길이 계산 → 클립 자르기(assets/cuts) → index.html, compositions/captions.html 생성.
 
-클립 길이는 assets/cuts 의 실제 길이를 읽어 쓰므로, make_cuts.py 로 길이를 바꾼 뒤 이 파일만 다시 실행하면 된다.
+자막마다 글자 수로 읽는 시간을 정하고, 장면 길이는 그 장면 자막 시간의 합이다.
 사용법 (reels/redwing-2268 폴더에서): python3 build_reel.py
 """
 
 import pathlib
 import subprocess
 
-PAD_SECONDS = 2.4  # 텅패드 사진이 나오는 시간
-END_HOLD = 0.5     # 마지막 자막이 사라진 뒤 착용샷만 남는 시간
+# 읽는 시간: 기본 0.9초 + 글자(공백 제외)당 0.1초, 최소 1.6초
+READ_BASE, READ_PER_CHAR, READ_MIN = 0.9, 0.1, 1.6
+END_HOLD = 0.8  # 마지막 자막이 사라진 뒤 착용샷만 남는 시간
 
-
-def length(name: str) -> float:
-    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0",
-                          f"assets/cuts/{name}.mp4"], capture_output=True, text=True, check=True).stdout
-    return round(float(out), 2)
-
-
-# (이름, 원래 소리 유지)
-SEQ = [("c01", False), ("c02", False), ("c03", False), ("c04", False), ("c05", True), ("c06", False),
-       ("c07", False), ("c08", False), ("c09", False), ("pad", False), ("c10", False)]
-
-# 장면별 자막. 한 장면에 두 줄이면 장면 길이를 반으로 나눠 차례로 보여준다.
-# (장면, [자막...], 보조 줄, 스타일) 스타일: "" 기본, "low" 아래쪽(택처럼 글씨가 있는 장면), "dark" 흰 배경용 검은 글씨
-CAPTIONS = [
-    ("c01", ["레드윙 2268 엔지니어 리뷰"], "(feat. 힐슬립 해결법)", ""),
-    ("c02", ["지금 새로 살 수 있는 엔지니어는 2966이고", "2268은 사실상 단종이에요"], None, ""),
-    ("c03", ["2966은 클론다이크 가죽이라 차심,", "2268은 블랙 크롬이라 흑심이에요"], None, ""),
-    ("c04", ["가장 큰 차이는 스틸토예요"], None, ""),
-    ("c05", ["2268은 앞코에 스틸토가 들어가 있어서"], None, ""),
-    ("c06", ["앞코가 둥글고 볼륨 있게 잡히고", "오래 신어도 꺼지지 않아요"], None, ""),
-    ("c07", ["이 앞코가 좋아서 일본 중고로 직구했습니다"], None, ""),
-    ("c08", ["평소 275, 다른 레드윙 9.5", "2268도 9.5로 샀어요"], None, "low"),
-    ("c09", ["끈이 없어서 힐슬립이 있었는데"], None, ""),
-    ("pad", ["페닥 수프라 텅 패드 붙이니 확 잡혔어요"], None, "dark"),
-    ("c10", ["2268 힐슬립 고민이면 텅패드 추천해요"], None, ""),
+# 장면: (이름, 원본, 시작 초, 원래 소리 유지, 최소 길이). 원본이 None 이면 사진.
+SCENES = [
+    ("c01", "01-side-push.mp4", 0.0, False, 3.0),
+    ("c02", "02-pair-buckle.mp4", 0.0, False, 0),
+    ("c03", "03-leather-to-toe.mp4", 1.5, False, 0),
+    ("c04", "04-toe-side.mp4", 0.3, False, 0),
+    ("c05", "05-toe-tap.mp4", 1.8, True, 3.4),  # 2.35 / 3.35 / 4.3초 두드리는 소리를 다 담는 길이
+    ("c06", "06-toe-pullback.mp4", 0.0, False, 0),
+    ("c07", "07-orbit.mp4", 0.0, False, 0),
+    ("c08", "08-tag.mp4", 2.7, False, 0),
+    ("c09", "09-inside-pad.mp4", 0.4, False, 0),
+    ("pad", None, 0, False, 0),
+    ("c10", "10-wear-a.mp4", 1.5, False, 0),
 ]
 
-starts, durs, media, t = {}, {}, [], 0.0
-for i, (name, audio) in enumerate(SEQ):
-    dur = PAD_SECONDS if name == "pad" else length(name)
-    starts[name], durs[name] = round(t, 2), dur
-    if name == "pad":
-        media.append(f'''      <img id="m-pad" class="clip" src="assets/photos/tongue-pad-card.jpg" alt=""
-        data-start="{t:.2f}" data-duration="{dur}" data-track-index="1"
-        style="position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:{i + 1};" />''')
+# 장면별 자막: (장면, [자막...], 보조 줄, 스타일)
+# 긴 문장은 \n 으로 의미 단위에서 직접 줄을 나눈다.
+# 스타일: "" 기본, "low" 아래쪽(택처럼 글씨가 있는 장면), "dark" 흰 배경용 검은 글씨
+CAPTIONS = [
+    ("c01", ["레드윙 2268 엔지니어 리뷰"], "(feat. 힐슬립 해결법)", ""),
+    ("c02", ["지금 새로 살 수 있는\n엔지니어는 2966이고", "2268은 사실상 단종이에요"], None, ""),
+    ("c03", ["2966은 클론다이크 가죽이라 차심,", "2268은 블랙 크롬이라 흑심이에요"], None, ""),
+    ("c04", ["가장 큰 차이는 스틸토예요"], None, ""),
+    ("c05", ["2268은 앞코에\n스틸토가 들어가 있어서"], None, ""),
+    ("c06", ["앞코가 둥글고 볼륨 있게 잡히고", "오래 신어도 꺼지지 않아요"], None, ""),
+    ("c07", ["이 앞코가 좋아서\n일본 중고로 직구했습니다"], None, ""),
+    ("c08", ["평소 275, 다른 레드윙 9.5", "2268도 9.5로 샀어요"], None, "low"),
+    ("c09", ["끈이 없어서 힐슬립이 있었는데"], None, ""),
+    ("pad", ["페닥 수프라 텅 패드 붙이니\n확 잡혔어요"], None, "dark"),
+    ("c10", ["2268 힐슬립 고민이면\n텅패드 추천해요"], None, ""),
+]
+
+FONT_FILE, FONT_FAMILY = "assets/fonts/GowunBatang-Bold.ttf", "Gowun Batang"
+BASE_VF = "scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,fps=30,format=yuv420p"
+
+
+def read_time(text: str) -> float:
+    return max(READ_MIN, READ_BASE + READ_PER_CHAR * len(text.replace(" ", "").replace("\n", "")))
+
+
+def media_length(path: str) -> float:
+    out = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
+                         capture_output=True, text=True, check=True).stdout
+    return float(out)
+
+
+# 1) 자막 시간과 장면 길이
+caption_times = {scene: [read_time(line) for line in lines] for scene, lines, _, _ in CAPTIONS}
+durs = {}
+for name, src, start, _, minimum in SCENES:
+    need = sum(caption_times[name]) + (END_HOLD if name == SCENES[-1][0] else 0)
+    dur = round(max(need, minimum), 2)
+    if src:
+        available = media_length(f"assets/clips/{src}") - start
+        if dur > available:
+            raise SystemExit(f"{name}: {dur:.2f}초가 필요한데 원본에 {available:.2f}초밖에 없습니다")
+    durs[name] = dur
+
+# 2) 클립 자르기
+pathlib.Path("assets/cuts").mkdir(parents=True, exist_ok=True)
+for name, src, start, keep_audio, _ in SCENES:
+    if not src:
+        continue
+    cmd = ["ffmpeg", "-loglevel", "error", "-y", "-ss", str(start), "-i", f"assets/clips/{src}", "-t", str(durs[name]),
+           "-vf", BASE_VF, "-c:v", "libx264", "-preset", "medium", "-crf", "18", "-g", "15", "-movflags", "+faststart"]
+    cmd += ["-c:a", "aac", "-b:a", "160k"] if keep_audio else ["-an"]
+    subprocess.run(cmd + [f"assets/cuts/{name}.mp4"], check=True)
+
+# 3) 영상 배치
+starts, media, t = {}, [], 0.0
+for i, (name, src, _, keep_audio, _) in enumerate(SCENES):
+    starts[name] = round(t, 2)
+    style = f"position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:{i + 1};"
+    if not src:
+        media.append(f'''      <img id="m-{name}" class="clip" src="assets/photos/tongue-pad-card.jpg" alt=""
+        data-start="{t:.2f}" data-duration="{durs[name]}" data-track-index="1" style="{style}" />''')
     else:
-        sound = 'data-has-audio="true"' if audio else "muted"
+        sound = 'data-has-audio="true"' if keep_audio else "muted"
         media.append(f'''      <video id="m-{name}" class="clip" src="assets/cuts/{name}.mp4" {sound} playsinline
-        data-start="{t:.2f}" data-duration="{dur}" data-track-index="1"
-        style="position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover;z-index:{i + 1};"></video>''')
-    t += dur
+        data-start="{t:.2f}" data-duration="{durs[name]}" data-track-index="1" style="{style}object-fit:cover;"></video>''')
+    t += durs[name]
 total = round(t, 2)
 
+# 4) 자막
 groups, tweens, k = [], [], 0
 for scene, lines, sub, style in CAPTIONS:
-    a0 = starts[scene]
-    span = durs[scene] - (END_HOLD if scene == SEQ[-1][0] else 0)
-    step = span / len(lines)
+    a = starts[scene]
     for j, line in enumerate(lines):
         k += 1
-        a, b = round(a0 + j * step, 2), round(a0 + (j + 1) * step, 2)
+        b = a + caption_times[scene][j]
+        if j == len(lines) - 1:  # 장면이 자막보다 길면 마지막 자막을 장면 끝까지 둔다
+            b = starts[scene] + durs[scene] - (END_HOLD if scene == SCENES[-1][0] else 0)
         cls = f"clip cap {style}".strip()
         subhtml = f'\n        <div class="sub">{sub}</div>' if sub and j == 0 else ""
-        groups.append(f'''      <div id="cap{k}" class="{cls}" data-start="{a}" data-duration="{round(b - a, 2)}">
-        <div id="cap{k}-in" class="in"><div class="main">{line}</div>{subhtml}</div>
+        groups.append(f'''      <div id="cap{k}" class="{cls}" data-start="{a:.2f}" data-duration="{b - a:.2f}">
+        <div id="cap{k}-in" class="in"><div class="main">{line.replace(chr(10), "<br>")}</div>{subhtml}</div>
       </div>''')
-        if a == 0:
-            continue  # 0초 프레임이 커버가 되므로 첫 자막은 처음부터 보인다
-        tweens.append(f'    tl.fromTo("#cap{k}-in", {{ opacity: 0, y: 8 }}, '
-                      f'{{ opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }}, {a});')
+        if a > 0:  # 0초 프레임이 커버가 되므로 첫 자막은 처음부터 보인다
+            tweens.append(f'    tl.fromTo("#cap{k}-in", {{ opacity: 0, y: 8 }}, '
+                          f'{{ opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }}, {a:.2f});')
+        a = b
 
 captions = f'''<template>
   <style>
-    @font-face {{ font-family: "Pretendard"; font-weight: 500; src: url("assets/fonts/Pretendard-Medium.woff2") format("woff2"); }}
-    @font-face {{ font-family: "Pretendard"; font-weight: 700; src: url("assets/fonts/Pretendard-Bold.woff2") format("woff2"); }}
+    @font-face {{ font-family: "{FONT_FAMILY}"; font-weight: 700; src: url("{FONT_FILE}") format("truetype"); }}
     #root {{ position: absolute; inset: 0; }}
     .cap {{ position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }}
-    .in {{ position: absolute; left: 90px; width: 900px; top: 620px; text-align: center; font-family: "Pretendard"; color: #ffffff;
-      word-break: keep-all; text-shadow: 0 0 3px rgba(0,0,0,0.85), 0 3px 14px rgba(0,0,0,0.55); }}
-    .main {{ font-weight: 700; font-size: 58px; line-height: 1.32; letter-spacing: -0.02em; }}
+    .in {{ position: absolute; left: 80px; width: 920px; top: 620px; text-align: center; font-family: "{FONT_FAMILY}";
+      font-weight: 700; color: #fffaf0; word-break: keep-all;
+      text-shadow: 0 0 2px rgba(0,0,0,0.95), 0 0 6px rgba(0,0,0,0.75), 0 3px 16px rgba(0,0,0,0.6); }}
+    .main {{ font-size: 60px; line-height: 1.34; letter-spacing: -0.01em; }}
     .low .in {{ top: 1120px; }}
     .dark .in {{ color: #17130f; text-shadow: none; }}
-    .sub {{ margin-top: 10px; font-weight: 500; font-size: 42px; opacity: 0.95; }}
+    .sub {{ margin-top: 12px; font-size: 42px; opacity: 0.95; }}
   </style>
   <div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
 {chr(10).join(groups)}
@@ -124,4 +166,7 @@ index = f'''<!doctype html>
 
 pathlib.Path("compositions/captions.html").write_text(captions)
 pathlib.Path("index.html").write_text(index)
-print("total", total, "starts", starts)
+print("total", total)
+for scene, lines, _, _ in CAPTIONS:
+    for line, sec in zip(lines, caption_times[scene]):
+        print(f"  {sec:.1f}s  {line!r}")
