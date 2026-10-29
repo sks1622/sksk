@@ -7,16 +7,16 @@ import subprocess
 
 # (출력 이름, 원본, 시작 초, 길이 초, 원래 소리 유지)
 CUTS = [
-    ("c01", "01-side-push.mp4", 0.0, 3.0, False),
-    ("c02", "02-pair-buckle.mp4", 0.0, 3.2, False),
-    ("c03", "03-leather-to-toe.mp4", 1.5, 3.5, False),
-    ("c04", "04-toe-side.mp4", 0.3, 2.0, False),
-    ("c05", "05-toe-tap.mp4", 1.8, 3.0, True),  # 2.35 / 3.35 / 4.3초에 두드리는 소리
-    ("c06", "06-toe-pullback.mp4", 0.0, 3.4, False),
-    ("c07", "07-orbit.mp4", 0.0, 2.6, False),
-    ("c08", "08-tag.mp4", 3.0, 3.5, False),
-    ("c09", "09-inside-pad.mp4", 0.4, 2.5, False),
-    ("c10", "10-wear-a.mp4", 1.5, 4.0, False),
+    ("c01", "01-side-push.mp4", 0.0, 3.5, False),
+    ("c02", "02-pair-buckle.mp4", 0.0, 3.8, False),
+    ("c03", "03-leather-to-toe.mp4", 1.5, 4.2, False),
+    ("c04", "04-toe-side.mp4", 0.3, 2.4, False),
+    ("c05", "05-toe-tap.mp4", 1.8, 3.4, True),  # 2.35 / 3.35 / 4.3초에 두드리는 소리
+    ("c06", "06-toe-pullback.mp4", 0.0, 4.0, False),
+    ("c07", "07-orbit.mp4", 0.0, 3.0, False),
+    ("c08", "08-tag.mp4", 3.0, 4.0, False),
+    ("c09", "09-inside-pad.mp4", 0.4, 3.0, False),
+    ("c10", "10-wear-a.mp4", 1.5, 4.4, False),
 ]
 
 for name, src, start, length, keep_audio in CUTS:
