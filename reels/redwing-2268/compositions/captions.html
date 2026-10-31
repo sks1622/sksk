@@ -1,0 +1,87 @@
+<template>
+  <style>
+    @font-face { font-family: "Gowun Batang"; font-weight: 700; src: url("assets/fonts/GowunBatang-Bold.ttf") format("truetype"); }
+    #root { position: absolute; inset: 0; }
+    .cap { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    .in { position: absolute; left: 80px; width: 920px; top: 620px; text-align: center; font-family: "Gowun Batang";
+      font-weight: 700; color: #fffaf0; word-break: keep-all;
+      text-shadow: 0 0 2px rgba(0,0,0,0.95), 0 0 6px rgba(0,0,0,0.75), 0 3px 16px rgba(0,0,0,0.6); }
+    .main { font-size: 60px; line-height: 1.34; letter-spacing: -0.01em; }
+    .low .in { top: 1120px; }
+    .dark .in { color: #17130f; text-shadow: none; }
+    .sub { margin-top: 12px; font-size: 42px; opacity: 0.95; }
+    .title .in { top: 560px; }
+    .title .main { font-size: 92px; line-height: 1.22; letter-spacing: -0.02em; }
+    .title .sub { margin-top: 26px; font-size: 40px; letter-spacing: 0.02em; opacity: 0.9; }
+  </style>
+  <div id="root" data-composition-id="captions" data-width="1080" data-height="1920">
+      <div id="cap1" class="clip cap title" data-start="0.00" data-duration="3.00">
+        <div id="cap1-in" class="in"><div class="main">레드윙 2268<br>엔지니어 리뷰</div>
+        <div class="sub">feat. 힐슬립 해결법</div></div>
+      </div>
+      <div id="cap2" class="clip cap" data-start="3.00" data-duration="3.50">
+        <div id="cap2-in" class="in"><div class="main">레드윙 엔지니어 부츠는<br>2966과 2268 두 가지가 있어요</div></div>
+      </div>
+      <div id="cap3" class="clip cap" data-start="6.50" data-duration="2.20">
+        <div id="cap3-in" class="in"><div class="main">2966은 지금도 판매 중이고</div></div>
+      </div>
+      <div id="cap4" class="clip cap" data-start="8.70" data-duration="1.90">
+        <div id="cap4-in" class="in"><div class="main">2268은 단종됐어요</div></div>
+      </div>
+      <div id="cap5" class="clip cap" data-start="10.60" data-duration="2.60">
+        <div id="cap5-in" class="in"><div class="main">2966은 클론다이크 가죽이라 차심,</div></div>
+      </div>
+      <div id="cap6" class="clip cap" data-start="13.20" data-duration="2.50">
+        <div id="cap6-in" class="in"><div class="main">2268은 블랙 크롬이라 흑심이에요</div></div>
+      </div>
+      <div id="cap7" class="clip cap" data-start="15.70" data-duration="2.00">
+        <div id="cap7-in" class="in"><div class="main">가장 큰 차이는 스틸토예요</div></div>
+      </div>
+      <div id="cap8" class="clip cap" data-start="17.70" data-duration="3.40">
+        <div id="cap8-in" class="in"><div class="main">2268은 앞코에<br>스틸토가 들어가 있어서</div></div>
+      </div>
+      <div id="cap9" class="clip cap" data-start="21.10" data-duration="2.20">
+        <div id="cap9-in" class="in"><div class="main">앞코가 둥글고 볼륨 있게 잡히고</div></div>
+      </div>
+      <div id="cap10" class="clip cap" data-start="23.30" data-duration="2.00">
+        <div id="cap10-in" class="in"><div class="main">오래 신어도 꺼지지 않아요</div></div>
+      </div>
+      <div id="cap11" class="clip cap" data-start="25.30" data-duration="2.70">
+        <div id="cap11-in" class="in"><div class="main">이 앞코가 좋아서<br>일본 중고로 직구했습니다</div></div>
+      </div>
+      <div id="cap12" class="clip cap low" data-start="28.00" data-duration="2.30">
+        <div id="cap12-in" class="in"><div class="main">평소 275, 다른 레드윙 9.5</div></div>
+      </div>
+      <div id="cap13" class="clip cap low" data-start="30.30" data-duration="2.10">
+        <div id="cap13-in" class="in"><div class="main">2268도 9.5로 샀어요</div></div>
+      </div>
+      <div id="cap14" class="clip cap" data-start="32.40" data-duration="2.20">
+        <div id="cap14-in" class="in"><div class="main">끈이 없어서 힐슬립이 있었는데</div></div>
+      </div>
+      <div id="cap15" class="clip cap dark" data-start="34.60" data-duration="2.50">
+        <div id="cap15-in" class="in"><div class="main">페닥 수프라 텅 패드 붙이니<br>잘 잡아줘요</div></div>
+      </div>
+      <div id="cap16" class="clip cap" data-start="37.10" data-duration="2.70">
+        <div id="cap16-in" class="in"><div class="main">2268 힐슬립 고민이면<br>텅패드 추천해요</div></div>
+      </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#cap2-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 3.00);
+    tl.fromTo("#cap3-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 6.50);
+    tl.fromTo("#cap4-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 8.70);
+    tl.fromTo("#cap5-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 10.60);
+    tl.fromTo("#cap6-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 13.20);
+    tl.fromTo("#cap7-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 15.70);
+    tl.fromTo("#cap8-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 17.70);
+    tl.fromTo("#cap9-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 21.10);
+    tl.fromTo("#cap10-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 23.30);
+    tl.fromTo("#cap11-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 25.30);
+    tl.fromTo("#cap12-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 28.00);
+    tl.fromTo("#cap13-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 30.30);
+    tl.fromTo("#cap14-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 32.40);
+    tl.fromTo("#cap15-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 34.60);
+    tl.fromTo("#cap16-in", { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.14, ease: "power2.out" }, 37.10);
+    window.__timelines["captions"] = tl;
+  </script>
+</template>

@@ -1,0 +1,97 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; background: #0c0b0a; overflow: hidden; }
+    #light { position: absolute; inset: 0; background-color: #e9e4da; }
+    #strip { position: absolute; left: 0; top: 0; width: 1080px; height: 4770px; background: #0c0b0a; }
+    .frame { position: absolute; left: 0; width: 1080px; height: 1240px; }
+    .shot { position: absolute; left: 60px; top: 0; width: 960px; height: 960px; object-fit: cover; }
+    .edge { position: absolute; left: 14px; top: 460px; width: 32px; text-align: center;
+      font-family: "IBM Plex Mono"; font-size: 26px; color: #c9a25a; opacity: 0.8; }
+    .cap { position: absolute; left: 60px; top: 986px; width: 960px;
+      font-family: "IBM Plex Mono"; font-size: 30px; color: #d9d2c4; letter-spacing: 0.01em; white-space: nowrap; }
+    .cap .no { color: #c9a25a; margin-right: 22px; }
+    .label { position: absolute; left: 60px; top: -64px; font-family: "IBM Plex Mono";
+      font-size: 30px; color: #c9a25a; letter-spacing: 0.04em; }
+    .loupe { position: absolute; width: 360px; opacity: 0; }
+    .lens { position: relative; width: 360px; height: 360px; border-radius: 50%; overflow: hidden; background: #0c0b0a;
+      border: 5px solid #f4efe6; box-shadow: 0 14px 36px rgba(0,0,0,0.45); }
+    .lens img { position: absolute; max-width: none; }
+    .tag { margin-top: 14px; text-align: center; font-family: "IBM Plex Mono"; font-size: 28px; color: #f4efe6;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
+  </style>
+  <div data-hf-id="hf-7z9e" id="root" data-composition-id="sheet" data-width="1080" data-height="1920">
+    <div data-hf-id="hf-bm5p" id="lightbox" class="clip" data-start="0" data-duration="11.55"><div data-hf-id="hf-yp1f" id="light"></div></div>
+    <div data-hf-id="hf-qavp" id="stripwrap" class="clip" data-start="0" data-duration="11.55" data-layout-allow-overflow="">
+      <div data-hf-id="hf-7js5" id="strip">
+      <div data-hf-id="hf-ety3" class="frame" style="top: 0px;">
+        <img data-color-grading="{&quot;preset&quot;:null,&quot;intensity&quot;:1,&quot;adjust&quot;:{&quot;exposure&quot;:0,&quot;contrast&quot;:0,&quot;highlights&quot;:0,&quot;shadows&quot;:0,&quot;whites&quot;:0,&quot;blacks&quot;:0,&quot;temperature&quot;:0,&quot;tint&quot;:0,&quot;vibrance&quot;:0,&quot;saturation&quot;:0},&quot;details&quot;:{&quot;vignette&quot;:0,&quot;vignetteMidpoint&quot;:0.5,&quot;vignetteRoundness&quot;:0,&quot;vignetteFeather&quot;:0.65,&quot;grain&quot;:0.08,&quot;grainSize&quot;:0.18,&quot;grainRoughness&quot;:0.55},&quot;effects&quot;:{&quot;blur&quot;:0,&quot;pixelate&quot;:0,&quot;chromaBleed&quot;:0,&quot;tapeDamage&quot;:0,&quot;tapeTracking&quot;:0,&quot;tapeNoise&quot;:1,&quot;tapeSpeed&quot;:0.5,&quot;filmArtifacts&quot;:0,&quot;halftone&quot;:0,&quot;halftoneSize&quot;:0,&quot;twoInkPrint&quot;:0,&quot;twoInkPrintSize&quot;:0,&quot;ascii&quot;:0,&quot;asciiSize&quot;:0.06578947368421052,&quot;asciiInvert&quot;:0,&quot;asciiStyle&quot;:0,&quot;asciiColor&quot;:1,&quot;asciiRotation&quot;:0,&quot;dither&quot;:0,&quot;ditherSize&quot;:0,&quot;bloom&quot;:0,&quot;bloomRadius&quot;:8,&quot;monoScreen&quot;:0,&quot;monoScreenSize&quot;:0,&quot;monoScreenAngle&quot;:0,&quot;monoScreenSpread&quot;:0,&quot;monoScreenShape&quot;:0,&quot;monoScreenInvert&quot;:0,&quot;scanlines&quot;:0,&quot;scanlineCount&quot;:0,&quot;scanlineSoftness&quot;:0,&quot;chromaticAberration&quot;:0,&quot;chromaticAngle&quot;:0,&quot;crtCurvature&quot;:0,&quot;digitalGlitch&quot;:0,&quot;digitalGlitchColorSplit&quot;:0,&quot;digitalGlitchLineTear&quot;:0,&quot;digitalGlitchPixelate&quot;:0,&quot;digitalGlitchBlockAmount&quot;:0,&quot;digitalGlitchBlockDisplacement&quot;:0,&quot;digitalGlitchBlockOpacity&quot;:0,&quot;digitalGlitchSpeed&quot;:0,&quot;engraving&quot;:0,&quot;engravingSpacing&quot;:0.4117647058823529,&quot;engravingMinThickness&quot;:0.2,&quot;engravingMaxThickness&quot;:0.4571428571428572,&quot;engravingAngle&quot;:0.25,&quot;engravingContrast&quot;:0.4666666666666667,&quot;engravingSharpness&quot;:0.59,&quot;engravingWave&quot;:0.2,&quot;engravingWaveFrequency&quot;:0.2222222222222222,&quot;crosshatch&quot;:0,&quot;crosshatchSpacing&quot;:0.28,&quot;crosshatchThickness&quot;:0.25,&quot;crosshatchAngle&quot;:0.25,&quot;crosshatchContrast&quot;:0.3333333333333333,&quot;crosshatchEdges&quot;:0.5,&quot;crosshatchLineWeight&quot;:0,&quot;crosshatchWave&quot;:0.33,&quot;crosshatchWaveFrequency&quot;:0.2222222222222222,&quot;kuwahara&quot;:0,&quot;kuwaharaRadius&quot;:0.14285714285714285,&quot;kuwaharaSharpness&quot;:0.3125,&quot;kuwaharaSaturation&quot;:0.5},&quot;lut&quot;:null,&quot;colorSpace&quot;:&quot;rec709&quot;}" data-hf-id="hf-4bdl" class="shot" src="assets/photos/photo1.jpg" alt="">
+        <div data-hf-id="hf-k067" class="label" data-var-text="label">roll 01</div>
+        <div data-hf-id="hf-jq1h" class="edge" data-layout-ignore="">1</div>
+        <div data-hf-id="hf-jpx4" class="cap"><span data-hf-id="hf-uqzb" class="no">01</span>field jacket · work vest · raw denim</div>
+      </div>
+      <div data-hf-id="hf-okqk" class="frame" style="top: 1240px;">
+        <img data-color-grading="{&quot;preset&quot;:null,&quot;intensity&quot;:1,&quot;adjust&quot;:{&quot;exposure&quot;:0,&quot;contrast&quot;:0,&quot;highlights&quot;:0,&quot;shadows&quot;:0,&quot;whites&quot;:0,&quot;blacks&quot;:0,&quot;temperature&quot;:0,&quot;tint&quot;:0,&quot;vibrance&quot;:0,&quot;saturation&quot;:0},&quot;details&quot;:{&quot;vignette&quot;:0,&quot;vignetteMidpoint&quot;:0.5,&quot;vignetteRoundness&quot;:0,&quot;vignetteFeather&quot;:0.65,&quot;grain&quot;:0.08,&quot;grainSize&quot;:0.18,&quot;grainRoughness&quot;:0.55},&quot;effects&quot;:{&quot;blur&quot;:0,&quot;pixelate&quot;:0,&quot;chromaBleed&quot;:0,&quot;tapeDamage&quot;:0,&quot;tapeTracking&quot;:0,&quot;tapeNoise&quot;:1,&quot;tapeSpeed&quot;:0.5,&quot;filmArtifacts&quot;:0,&quot;halftone&quot;:0,&quot;halftoneSize&quot;:0,&quot;twoInkPrint&quot;:0,&quot;twoInkPrintSize&quot;:0,&quot;ascii&quot;:0,&quot;asciiSize&quot;:0.06578947368421052,&quot;asciiInvert&quot;:0,&quot;asciiStyle&quot;:0,&quot;asciiColor&quot;:1,&quot;asciiRotation&quot;:0,&quot;dither&quot;:0,&quot;ditherSize&quot;:0,&quot;bloom&quot;:0,&quot;bloomRadius&quot;:8,&quot;monoScreen&quot;:0,&quot;monoScreenSize&quot;:0,&quot;monoScreenAngle&quot;:0,&quot;monoScreenSpread&quot;:0,&quot;monoScreenShape&quot;:0,&quot;monoScreenInvert&quot;:0,&quot;scanlines&quot;:0,&quot;scanlineCount&quot;:0,&quot;scanlineSoftness&quot;:0,&quot;chromaticAberration&quot;:0,&quot;chromaticAngle&quot;:0,&quot;crtCurvature&quot;:0,&quot;digitalGlitch&quot;:0,&quot;digitalGlitchColorSplit&quot;:0,&quot;digitalGlitchLineTear&quot;:0,&quot;digitalGlitchPixelate&quot;:0,&quot;digitalGlitchBlockAmount&quot;:0,&quot;digitalGlitchBlockDisplacement&quot;:0,&quot;digitalGlitchBlockOpacity&quot;:0,&quot;digitalGlitchSpeed&quot;:0,&quot;engraving&quot;:0,&quot;engravingSpacing&quot;:0.4117647058823529,&quot;engravingMinThickness&quot;:0.2,&quot;engravingMaxThickness&quot;:0.4571428571428572,&quot;engravingAngle&quot;:0.25,&quot;engravingContrast&quot;:0.4666666666666667,&quot;engravingSharpness&quot;:0.59,&quot;engravingWave&quot;:0.2,&quot;engravingWaveFrequency&quot;:0.2222222222222222,&quot;crosshatch&quot;:0,&quot;crosshatchSpacing&quot;:0.28,&quot;crosshatchThickness&quot;:0.25,&quot;crosshatchAngle&quot;:0.25,&quot;crosshatchContrast&quot;:0.3333333333333333,&quot;crosshatchEdges&quot;:0.5,&quot;crosshatchLineWeight&quot;:0,&quot;crosshatchWave&quot;:0.33,&quot;crosshatchWaveFrequency&quot;:0.2222222222222222,&quot;kuwahara&quot;:0,&quot;kuwaharaRadius&quot;:0.14285714285714285,&quot;kuwaharaSharpness&quot;:0.3125,&quot;kuwaharaSaturation&quot;:0.5},&quot;lut&quot;:null,&quot;colorSpace&quot;:&quot;rec709&quot;}" data-hf-id="hf-iofy" class="shot" src="assets/photos/photo2.jpg" alt="">
+        <div data-hf-id="hf-kwyk" class="edge" data-layout-ignore="">2</div>
+        <div data-hf-id="hf-34qg" class="cap"><span data-hf-id="hf-ucoa" class="no">02</span>coverall · faded denim · helmet bag</div>
+      </div>
+      <div data-hf-id="hf-jm59" class="frame" style="top: 2480px;">
+        <img data-color-grading="{&quot;preset&quot;:null,&quot;intensity&quot;:1,&quot;adjust&quot;:{&quot;exposure&quot;:0,&quot;contrast&quot;:0,&quot;highlights&quot;:0,&quot;shadows&quot;:0,&quot;whites&quot;:0,&quot;blacks&quot;:0,&quot;temperature&quot;:0,&quot;tint&quot;:0,&quot;vibrance&quot;:0,&quot;saturation&quot;:0},&quot;details&quot;:{&quot;vignette&quot;:0,&quot;vignetteMidpoint&quot;:0.5,&quot;vignetteRoundness&quot;:0,&quot;vignetteFeather&quot;:0.65,&quot;grain&quot;:0.08,&quot;grainSize&quot;:0.18,&quot;grainRoughness&quot;:0.55},&quot;effects&quot;:{&quot;blur&quot;:0,&quot;pixelate&quot;:0,&quot;chromaBleed&quot;:0,&quot;tapeDamage&quot;:0,&quot;tapeTracking&quot;:0,&quot;tapeNoise&quot;:1,&quot;tapeSpeed&quot;:0.5,&quot;filmArtifacts&quot;:0,&quot;halftone&quot;:0,&quot;halftoneSize&quot;:0,&quot;twoInkPrint&quot;:0,&quot;twoInkPrintSize&quot;:0,&quot;ascii&quot;:0,&quot;asciiSize&quot;:0.06578947368421052,&quot;asciiInvert&quot;:0,&quot;asciiStyle&quot;:0,&quot;asciiColor&quot;:1,&quot;asciiRotation&quot;:0,&quot;dither&quot;:0,&quot;ditherSize&quot;:0,&quot;bloom&quot;:0,&quot;bloomRadius&quot;:8,&quot;monoScreen&quot;:0,&quot;monoScreenSize&quot;:0,&quot;monoScreenAngle&quot;:0,&quot;monoScreenSpread&quot;:0,&quot;monoScreenShape&quot;:0,&quot;monoScreenInvert&quot;:0,&quot;scanlines&quot;:0,&quot;scanlineCount&quot;:0,&quot;scanlineSoftness&quot;:0,&quot;chromaticAberration&quot;:0,&quot;chromaticAngle&quot;:0,&quot;crtCurvature&quot;:0,&quot;digitalGlitch&quot;:0,&quot;digitalGlitchColorSplit&quot;:0,&quot;digitalGlitchLineTear&quot;:0,&quot;digitalGlitchPixelate&quot;:0,&quot;digitalGlitchBlockAmount&quot;:0,&quot;digitalGlitchBlockDisplacement&quot;:0,&quot;digitalGlitchBlockOpacity&quot;:0,&quot;digitalGlitchSpeed&quot;:0,&quot;engraving&quot;:0,&quot;engravingSpacing&quot;:0.4117647058823529,&quot;engravingMinThickness&quot;:0.2,&quot;engravingMaxThickness&quot;:0.4571428571428572,&quot;engravingAngle&quot;:0.25,&quot;engravingContrast&quot;:0.4666666666666667,&quot;engravingSharpness&quot;:0.59,&quot;engravingWave&quot;:0.2,&quot;engravingWaveFrequency&quot;:0.2222222222222222,&quot;crosshatch&quot;:0,&quot;crosshatchSpacing&quot;:0.28,&quot;crosshatchThickness&quot;:0.25,&quot;crosshatchAngle&quot;:0.25,&quot;crosshatchContrast&quot;:0.3333333333333333,&quot;crosshatchEdges&quot;:0.5,&quot;crosshatchLineWeight&quot;:0,&quot;crosshatchWave&quot;:0.33,&quot;crosshatchWaveFrequency&quot;:0.2222222222222222,&quot;kuwahara&quot;:0,&quot;kuwaharaRadius&quot;:0.14285714285714285,&quot;kuwaharaSharpness&quot;:0.3125,&quot;kuwaharaSaturation&quot;:0.5},&quot;lut&quot;:null,&quot;colorSpace&quot;:&quot;rec709&quot;}" data-hf-id="hf-xicb" class="shot" src="assets/photos/photo3.jpg" alt="">
+        <div data-hf-id="hf-kinj" class="edge" data-layout-ignore="">3</div>
+        <div data-hf-id="hf-vm05" class="cap"><span data-hf-id="hf-tyd9" class="no">03</span>leather jacket · chino · boots</div>
+      </div>
+      <div data-hf-id="hf-avb7" class="frame" style="top: 3720px;">
+        <img data-color-grading="{&quot;preset&quot;:null,&quot;intensity&quot;:1,&quot;adjust&quot;:{&quot;exposure&quot;:0,&quot;contrast&quot;:0,&quot;highlights&quot;:0,&quot;shadows&quot;:0,&quot;whites&quot;:0,&quot;blacks&quot;:0,&quot;temperature&quot;:0,&quot;tint&quot;:0,&quot;vibrance&quot;:0,&quot;saturation&quot;:0},&quot;details&quot;:{&quot;vignette&quot;:0,&quot;vignetteMidpoint&quot;:0.5,&quot;vignetteRoundness&quot;:0,&quot;vignetteFeather&quot;:0.65,&quot;grain&quot;:0.08,&quot;grainSize&quot;:0.18,&quot;grainRoughness&quot;:0.55},&quot;effects&quot;:{&quot;blur&quot;:0,&quot;pixelate&quot;:0,&quot;chromaBleed&quot;:0,&quot;tapeDamage&quot;:0,&quot;tapeTracking&quot;:0,&quot;tapeNoise&quot;:1,&quot;tapeSpeed&quot;:0.5,&quot;filmArtifacts&quot;:0,&quot;halftone&quot;:0,&quot;halftoneSize&quot;:0,&quot;twoInkPrint&quot;:0,&quot;twoInkPrintSize&quot;:0,&quot;ascii&quot;:0,&quot;asciiSize&quot;:0.06578947368421052,&quot;asciiInvert&quot;:0,&quot;asciiStyle&quot;:0,&quot;asciiColor&quot;:1,&quot;asciiRotation&quot;:0,&quot;dither&quot;:0,&quot;ditherSize&quot;:0,&quot;bloom&quot;:0,&quot;bloomRadius&quot;:8,&quot;monoScreen&quot;:0,&quot;monoScreenSize&quot;:0,&quot;monoScreenAngle&quot;:0,&quot;monoScreenSpread&quot;:0,&quot;monoScreenShape&quot;:0,&quot;monoScreenInvert&quot;:0,&quot;scanlines&quot;:0,&quot;scanlineCount&quot;:0,&quot;scanlineSoftness&quot;:0,&quot;chromaticAberration&quot;:0,&quot;chromaticAngle&quot;:0,&quot;crtCurvature&quot;:0,&quot;digitalGlitch&quot;:0,&quot;digitalGlitchColorSplit&quot;:0,&quot;digitalGlitchLineTear&quot;:0,&quot;digitalGlitchPixelate&quot;:0,&quot;digitalGlitchBlockAmount&quot;:0,&quot;digitalGlitchBlockDisplacement&quot;:0,&quot;digitalGlitchBlockOpacity&quot;:0,&quot;digitalGlitchSpeed&quot;:0,&quot;engraving&quot;:0,&quot;engravingSpacing&quot;:0.4117647058823529,&quot;engravingMinThickness&quot;:0.2,&quot;engravingMaxThickness&quot;:0.4571428571428572,&quot;engravingAngle&quot;:0.25,&quot;engravingContrast&quot;:0.4666666666666667,&quot;engravingSharpness&quot;:0.59,&quot;engravingWave&quot;:0.2,&quot;engravingWaveFrequency&quot;:0.2222222222222222,&quot;crosshatch&quot;:0,&quot;crosshatchSpacing&quot;:0.28,&quot;crosshatchThickness&quot;:0.25,&quot;crosshatchAngle&quot;:0.25,&quot;crosshatchContrast&quot;:0.3333333333333333,&quot;crosshatchEdges&quot;:0.5,&quot;crosshatchLineWeight&quot;:0,&quot;crosshatchWave&quot;:0.33,&quot;crosshatchWaveFrequency&quot;:0.2222222222222222,&quot;kuwahara&quot;:0,&quot;kuwaharaRadius&quot;:0.14285714285714285,&quot;kuwaharaSharpness&quot;:0.3125,&quot;kuwaharaSaturation&quot;:0.5},&quot;lut&quot;:null,&quot;colorSpace&quot;:&quot;rec709&quot;}" data-hf-id="hf-5xr4" class="shot" src="assets/photos/photo4.jpg" alt="">
+        <div data-hf-id="hf-lpkm" class="edge" data-layout-ignore="">4</div>
+        <div data-hf-id="hf-4vrq" class="cap"><span data-hf-id="hf-wqig" class="no">04</span>western shirt · light denim · suede boots</div>
+      </div>
+      </div>
+    </div>
+    <div data-hf-id="hf-utpu" id="loupes" class="clip" data-start="0" data-duration="11.55">
+    <div data-hf-id="hf-ffdk" id="loupe1" class="loupe" style="left: 655px; top: 780px;">
+      <div data-hf-id="hf-431g" class="lens">
+        <img data-hf-id="hf-9xcz" src="assets/photos/photo1.jpg" alt="" style="width: 2496px; height: 2496px; left: -1205px; top: -2129px;">
+      </div>
+      <div data-hf-id="hf-ut7f" class="tag">selvedge</div>
+    </div>
+    <div data-hf-id="hf-msqt" id="loupe2" class="loupe" style="left: 674px; top: 761px;">
+      <div data-hf-id="hf-n1uk" class="lens">
+        <img data-hf-id="hf-u8cd" src="assets/photos/photo2.jpg" alt="" style="width: 2304px; height: 2304px; left: -1202px; top: -1928px;">
+      </div>
+      <div data-hf-id="hf-kiak" class="tag">faded hem</div>
+    </div>
+    <div data-hf-id="hf-ahcc" id="loupe3" class="loupe" style="left: 694px; top: 703px;">
+      <div data-hf-id="hf-luxh" class="lens">
+        <img data-hf-id="hf-njyo" src="assets/photos/photo3.jpg" alt="" style="width: 2496px; height: 2496px; left: -1180px; top: -1929px;">
+      </div>
+      <div data-hf-id="hf-ze40" class="tag">work boots</div>
+    </div>
+    <div data-hf-id="hf-7w0q" id="loupe4" class="loupe" style="left: 655px; top: 732px;">
+      <div data-hf-id="hf-m98i" class="lens">
+        <img data-hf-id="hf-9zvl" src="assets/photos/photo4.jpg" alt="" style="width: 2304px; height: 2304px; left: -1041px; top: -1721px;">
+      </div>
+      <div data-hf-id="hf-9oux" class="tag">suede boots</div>
+    </div>
+    </div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.set("#strip", { x: 338.5, y: 70.0, scale: 0.3732, transformOrigin: "0 0" }, 0);
+    tl.set("#light", { backgroundColor: "#e9e4da" }, 0);
+    tl.to("#strip", { x: 0, y: 300, scale: 1, duration: 0.8, ease: "power2.inOut" }, 0.5);
+    tl.to("#light", { backgroundColor: "#0c0b0a", duration: 0.8, ease: "power2.inOut" }, 0.5);
+    tl.set("#loupe1", { opacity: 1 }, 2.2);
+    tl.set("#loupe1", { opacity: 0 }, 3.3);
+    tl.to("#strip", { y: -940, duration: 0.35, ease: "power2.inOut" }, 3.3);
+    tl.set("#loupe2", { opacity: 1 }, 4.55);
+    tl.set("#loupe2", { opacity: 0 }, 5.65);
+    tl.to("#strip", { y: -2180, duration: 0.35, ease: "power2.inOut" }, 5.65);
+    tl.set("#loupe3", { opacity: 1 }, 6.9);
+    tl.set("#loupe3", { opacity: 0 }, 8.0);
+    tl.to("#strip", { y: -3420, duration: 0.35, ease: "power2.inOut" }, 8.0);
+    tl.set("#loupe4", { opacity: 1 }, 9.25);
+    tl.set("#loupe4", { opacity: 0 }, 10.35);
+    tl.to("#strip", { x: 338.5, y: 70.0, scale: 0.3732, duration: 0.8, ease: "power2.inOut" }, 10.35);
+    tl.to("#light", { backgroundColor: "#e9e4da", duration: 0.8, ease: "power2.inOut" }, 10.35);
+    window.__timelines["sheet"] = tl;
+  </script>
+</template>
