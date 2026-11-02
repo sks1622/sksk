@@ -1,0 +1,38 @@
+# 인스타그램 댓글 자동 답글 (3시간마다)
+#
+# 켜는 방법: 저장소 Settings → Secrets and variables → Actions
+#   Secrets:   ANTHROPIC_API_KEY, IG_ACCESS_TOKEN, IG_USER_ID
+#   Variables: IG_AUTO_REPLY = true
+# 이 저장소는 공개 저장소라서, 로그에는 처리 개수만 남기고 댓글 내용은 출력하지 않습니다.
+name: Instagram 댓글 자동 답글
+
+on:
+  schedule:
+    - cron: "17 */3 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: instagram-comments
+  cancel-in-progress: false
+
+jobs:
+  reply:
+    if: vars.IG_AUTO_REPLY == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: instagram
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: 댓글 처리
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          IG_QUIET_LOGS: "1"
+        run: python -m igtool comments --auto --posts 10 --days 7 --max-actions 15
