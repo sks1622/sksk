@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Work-week outfit reel (Mon-Fri). Text overlays are HTML/CSS rendered by Chromium (overlays.mjs).
-# Usage: bash build.sh <clip folder> [editorial|spec|bold]
+# Usage: bash build.sh <clip folder> [editorial|spec|bold]   (final cut: editorial)
 #   Clips (*.mp4) are assigned Mon->Fri in filename date order.
 set -euo pipefail
 SRC=${1:?clip folder}; STYLE=${2:-editorial}
