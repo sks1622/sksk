@@ -2,8 +2,7 @@
 # Today's boots (chelsea boots): brush, put on, walk out. Same look as reels/boots-lacing:
 # "Today's boots" on the first shot only, natural colour, original sound, jump cuts that
 # alternate 1.0x / 1.2x punch-ins.
-# The camera lost focus mid-shot in clips 3-6; those moments are cut out (found per frame
-# with a Laplacian sharpness check) and the punch-ins hide the joins.
+# Focus drifts in a few moments; this cut keeps the takes whole for a natural flow anyway.
 # Usage: bash build.sh <clip folder>   (needs *_1.mp4 ... *_6.mp4)
 set -euo pipefail
 SRC=${1:?clip folder}
@@ -12,16 +11,14 @@ WORK=$(mktemp -d); trap 'rm -rf "$WORK"' EXIT
 node "$HERE/overlays.mjs" "$WORK/ov"
 clip() { ls "$SRC"/*_"$1".mp4 | head -1; }
 
-# clip  start  length  zoom  title   (every segment is in focus)
+# clip  start  length  zoom  title   (continuous takes, cut only at natural action points)
 SHOTS=(
-  "1 0.00 2.60 1.0 1"   # boot waiting, title
-  "1 2.60 1.23 1.2 0"   # brush comes in (focus drops at 3.87s)
-  "2 0.30 2.70 1.0 0"   # brushing
-  "3 0.35 2.00 1.2 0"   # brushing (focus drops at 2.4s)
-  "3 3.85 1.05 1.0 0"   # clean boot (focus back at 3.83s)
-  "4 0.05 1.20 1.2 0"   # boot on (focus drops at 1.3s)
-  "5 3.10 1.60 1.0 0"   # walking off (soft 0.8-3.0s skipped)
-  "6 1.40 3.00 1.2 0"   # out the door, empty floor (soft first 1.3s skipped)
+  "1 0.00 3.80 1.0 1"   # boot waiting, walk in, brush starts; title
+  "2 0.30 2.50 1.2 0"   # brushing
+  "3 0.30 3.80 1.0 0"   # last strokes, leg leaves, boot ready
+  "4 0.20 4.20 1.2 0"   # boot on, cuff
+  "5 0.20 4.40 1.0 0"   # cuff adjusted, walking off
+  "6 0.00 3.00 1.2 0"   # out the door
 )
 
 n=0
