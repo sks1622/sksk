@@ -1,0 +1,17 @@
+{
+  "extraKnownMarketplaces": {
+    "claude-for-financial-services": {
+      "source": { "source": "github", "repo": "anthropics/financial-services" }
+    },
+    "eodhd-claude-skills": {
+      "source": { "source": "github", "repo": "EodHistoricalData/eodhd-claude-skills" }
+    }
+  },
+  "enabledPlugins": {
+    "equity-research@claude-for-financial-services": true,
+    "financial-analysis@claude-for-financial-services": true,
+    "market-researcher@claude-for-financial-services": true,
+    "earnings-reviewer@claude-for-financial-services": true,
+    "eodhd-api@eodhd-claude-skills": true
+  }
+}
