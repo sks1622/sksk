@@ -4,7 +4,9 @@
     "financial-analysis@claude-for-financial-services": true,
     "market-researcher@claude-for-financial-services": true,
     "earnings-reviewer@claude-for-financial-services": true,
-    "eodhd-api@eodhd-claude-skills": true
+    "eodhd-api@eodhd-claude-skills": true,
+    "finance-tutor@mechami-plugins": true,
+    "coinpaprika@coinpaprika-plugins": true
   },
   "extraKnownMarketplaces": {
     "claude-for-financial-services": {
@@ -17,6 +19,18 @@
       "source": {
         "source": "github",
         "repo": "EodHistoricalData/eodhd-claude-skills"
+      }
+    },
+    "mechami-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "mechamis/mechami-plugins"
+      }
+    },
+    "coinpaprika-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "coinpaprika/claude-marketplace"
       }
     }
   }
