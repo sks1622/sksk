@@ -22,12 +22,15 @@ const css = `@font-face{font-family:PT;font-weight:700;src:url(${f("Pretendard-B
   letter-spacing:-.02em;word-break:keep-all;
   text-shadow:0 0 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6),0 3px 18px rgba(0,0,0,.55)}
 .main,.sub{font-size:58px;line-height:1.38}
-.title .main{font-size:96px;font-weight:800;line-height:1.15;letter-spacing:-.03em}
+.title{top:1130px}
+.kicker{font-size:52px;letter-spacing:.01em;opacity:.95;margin-bottom:6px}
+.title .main{font-size:138px;font-weight:800;line-height:1.1;letter-spacing:-.04em}
+.hl{color:#F5D76E}
 .title .sub{margin-top:18px;font-size:48px}`;
 
 // Edit the wording here. Each key is used by one shot in build.sh.
 export const CAPTIONS = {
-  title: { cls: "title", main: "M-65 피쉬테일", sub: "feat. 70년대 오리지널 인디언헤드 패치" },
+  title: { cls: "title", kicker: "M-65 피쉬테일", main: '<span class="hl">패치업</span> 후기', sub: "feat. 70년대 오리지널 인디언헤드 패치" },
   why1: { main: "그냥 입기엔 좀 밋밋하기도 했고," },
   why2: { main: "이전 주인이 패치를 뗀 자국도", sub: "그대로 남아 있었거든요" },
   which: { top: 330, main: "그래서 고른 건 인디언헤드 패치" },
@@ -63,7 +66,7 @@ mkdirSync(out, { recursive: true });
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1080, height: 1920 } });
 const shots = [
-  ...Object.entries(CAPTIONS).map(([k, c]) => [k, `<div class="in ${c.cls || ""}"${c.top ? ` style="top:${c.top}px"` : ""}><div class="main">${c.main}</div>${c.sub ? `<div class="sub">${c.sub}</div>` : ""}</div>`]),
+  ...Object.entries(CAPTIONS).map(([k, c]) => [k, `<div class="in ${c.cls || ""}"${c.top ? ` style="top:${c.top}px"` : ""}>${c.kicker ? `<div class="kicker">${c.kicker}</div>` : ""}<div class="main">${c.main}</div>${c.sub ? `<div class="sub">${c.sub}</div>` : ""}</div>`]),
   ...Object.entries(MARKS),
 ];
 for (const [name, body] of shots) {
