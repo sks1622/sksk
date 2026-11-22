@@ -25,15 +25,18 @@ const css = `@font-face{font-family:GB;font-weight:700;src:url(${font})}
 
 // Edit the wording here. Each key is used by one shot in build.sh.
 export const CAPTIONS = {
-  title: { cls: "title", main: "M-65 피쉬테일", sub: "feat. 오리지널 2사단 패치" },
-  why: { main: "밋밋하기도 했고,", sub: "이전 주인이 패치를 뗀 자국이 있었어요" },
-  which: { top: 330, main: "미 2보병사단", sub: "\u2018인디언헤드\u2019 패치" },
-  korea: { top: 330, main: "한국에 주둔하는", sub: "미군 사단이에요" },
-  original: { main: "레플리카 아닌 오리지널", sub: "해외에서 어렵게 구했어요" },
-  rule: { main: "부대 패치는 왼쪽 어깨", sub: "지금 소속된 부대 자리예요" },
-  place: { main: "어깨 솔기에서 1.3cm 아래,", sub: "소매 가운데에 달아요" },
-  label: { main: "파카는 1971년 계약분", sub: "알파 인더스트리" },
-  end: { main: "패치, 있다 vs 없다?" },
+  title: { cls: "title", main: "M-65 피쉬테일", sub: "feat. 70년대 오리지널 인디언헤드 패치" },
+  why1: { main: "그냥 입기엔 좀 밋밋하기도 했고," },
+  why2: { main: "이전 주인이 패치를 뗀 자국도", sub: "그대로 남아 있었거든요" },
+  which: { top: 330, main: "그래서 고른 건 인디언헤드 패치" },
+  korea: { top: 330, main: "한국에 주둔하는", sub: "미 2보병사단의 상징이에요" },
+  orig1: { main: "제 M-65가 만들어진 70년대에", sub: "실제로 쓰인 오리지널 패치예요" },
+  orig2: { main: "국내에선 구할 수가 없어서" },
+  orig3: { main: "이베이, 메루카리 같은 해외에서", sub: "디깅해서 겨우 구했어요" },
+  rule: { main: "부대 패치는 왼쪽 어깨에 달아요" },
+  place: { main: "어깨 솔기에서 1.3cm(½인치) 아래,", sub: "소매 한가운데가 정석이에요" },
+  label: { main: "파카는 1971년 계약분,", sub: "알파 인더스트리 제품이에요" },
+  end: { main: "패치, 있는 게 나아요", sub: "없는 게 나아요?" },
 };
 
 // Markings drawn on freeze frames (coordinates are in the 1080x1920 frame).
