@@ -1,5 +1,5 @@
-// Captions for the M-65 patch reel, in the style of the Red Wing 2268 review
-// (Gowun Batang Bold, warm white, soft shadow, centered). Usage: node overlays.mjs <out dir>
+// Captions and markings for the M-65 patch reel
+// (Pretendard Bold, white, soft shadow, centered). Usage: node overlays.mjs <out dir>
 import { createRequire } from "node:module";
 import { execSync } from "node:child_process";
 import { mkdirSync, unlinkSync, writeFileSync } from "node:fs";
@@ -13,15 +13,17 @@ try { ({ chromium } = require("playwright")); }
 catch { ({ chromium } = require(join(execSync("npm root -g").toString().trim(), "playwright"))); }
 
 const out = process.argv[2] || join(HERE, "build", "overlays");
-const font = pathToFileURL(join(HERE, "..", "boot-ritual", "fonts", "GowunBatang-Bold.ttf")).href;
-const css = `@font-face{font-family:GB;font-weight:700;src:url(${font})}
+const fontDir = join(HERE, "fonts");
+const f = (n) => pathToFileURL(join(fontDir, n)).href;
+const css = `@font-face{font-family:PT;font-weight:700;src:url(${f("Pretendard-Bold.otf")})}
+@font-face{font-family:PT;font-weight:800;src:url(${f("Pretendard-ExtraBold.otf")})}
 *{margin:0;padding:0}html,body{width:1080px;height:1920px;background:transparent;overflow:hidden}
-.in{position:absolute;left:80px;width:920px;top:1260px;text-align:center;font-family:GB;font-weight:700;color:#fffaf0;
-  text-shadow:0 0 2px rgba(0,0,0,.95),0 0 6px rgba(0,0,0,.75),0 3px 16px rgba(0,0,0,.6)}
-.main{font-size:60px;line-height:1.3;letter-spacing:-.01em}
-.sub{margin-top:14px;font-size:42px;opacity:.95}
-.title .main{font-size:92px;line-height:1.18;letter-spacing:-.02em}
-.title .sub{margin-top:24px;font-size:42px}`;
+.in{position:absolute;left:50px;width:980px;top:1250px;text-align:center;font-family:PT;font-weight:700;color:#fff;
+  letter-spacing:-.02em;word-break:keep-all;
+  text-shadow:0 0 3px rgba(0,0,0,.9),0 0 8px rgba(0,0,0,.6),0 3px 18px rgba(0,0,0,.55)}
+.main,.sub{font-size:58px;line-height:1.38}
+.title .main{font-size:96px;font-weight:800;line-height:1.15;letter-spacing:-.03em}
+.title .sub{margin-top:18px;font-size:48px}`;
 
 // Edit the wording here. Each key is used by one shot in build.sh.
 export const CAPTIONS = {
@@ -36,14 +38,14 @@ export const CAPTIONS = {
   rule: { main: "부대 패치는 왼쪽 어깨에 달아요" },
   place: { main: "어깨 솔기에서 1.3cm(½인치) 아래,", sub: "소매 한가운데가 정석이에요" },
   label: { main: "파카는 1971년 계약분,", sub: "알파 인더스트리 제품이에요" },
-  end: { main: "패치, 있는 게 나아요", sub: "없는 게 나아요?" },
+  end: { main: "드디어 완성된 M-65", sub: "70년대 그 모습 그대로" },
 };
 
 // Markings drawn on freeze frames (coordinates are in the 1080x1920 frame).
 const Y = "#F5D76E";
 const ring = (x, y, r) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${Y}" stroke-width="7"/>`;
 const tag = (x, y, t, anchor = "start") =>
-  `<text x="${x}" y="${y}" text-anchor="${anchor}" font-family="GB" font-weight="700" font-size="46" fill="${Y}" stroke="rgba(0,0,0,.65)" stroke-width="8" paint-order="stroke">${t}</text>`;
+  `<text x="${x}" y="${y}" text-anchor="${anchor}" font-family="PT" font-weight="700" font-size="46" fill="${Y}" stroke="rgba(0,0,0,.65)" stroke-width="8" paint-order="stroke">${t}</text>`;
 const arrow = (x, y1, y2) => `<g stroke="${Y}" stroke-width="6" fill="none" stroke-linecap="round">
   <line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}"/><path d="M${x - 14} ${y1 + 18} L${x} ${y1} L${x + 14} ${y1 + 18}"/>
   <path d="M${x - 14} ${y2 - 18} L${x} ${y2} L${x + 14} ${y2 - 18}"/></g>`;
